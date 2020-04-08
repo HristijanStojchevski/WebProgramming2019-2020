@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a79cf714-a1ff-47a4-8b9c-379ed1db45e8" name="Default Changelist" comment="spring initialization" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1aGhofalcEOQ7GO8ni2ZLAdmE3T" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunManager">
+    <configuration name="RentScootApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="rent-scoot-spring" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.finki.ukim.mk.rentscoot.RentScootApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\HristijanSRM\AppData\Roaming\Subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a79cf714-a1ff-47a4-8b9c-379ed1db45e8" name="Default Changelist" comment="" />
+      <created>1586368014476</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1586368014476</updated>
+      <workItem from="1586368048761" duration="3065000" />
+      <workItem from="1586373592468" duration="1101000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="spring initialization" />
+    <option name="LAST_COMMIT_MESSAGE" value="spring initialization" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1423" y="0" key="CommitChangelistDialog2" timestamp="1586374227627">
+      <screen x="1366" y="0" width="1024" height="728" />
+    </state>
+    <state x="1423" y="0" key="CommitChangelistDialog2/0.0.1366.728/1366.0.1024.728@1366.0.1024.728" timestamp="1586374227627" />
+    <state x="1658" y="103" key="FileChooserDialogImpl" timestamp="1586374697058">
+      <screen x="1366" y="0" width="1024" height="728" />
+    </state>
+    <state x="1658" y="103" key="FileChooserDialogImpl/0.0.1366.728/1366.0.1024.728@1366.0.1024.728" timestamp="1586374697058" />
+    <state x="1379" y="0" key="SettingsEditor" timestamp="1586373055635">
+      <screen x="1366" y="0" width="1024" height="728" />
+    </state>
+    <state x="1379" y="0" key="SettingsEditor/0.0.1366.728/1366.0.1024.728@1366.0.1024.728" timestamp="1586373055635" />
+    <state x="1366" y="64" key="new project wizard" timestamp="1586374700230">
+      <screen x="1366" y="0" width="1024" height="728" />
+    </state>
+    <state x="1366" y="64" key="new project wizard/0.0.1366.728/1366.0.1024.728@1366.0.1024.728" timestamp="1586374700230" />
+    <state x="1708" y="153" key="svn.repositoryBrowser" timestamp="1586374133989">
+      <screen x="1366" y="0" width="1024" height="728" />
+    </state>
+    <state x="1708" y="153" key="svn.repositoryBrowser/0.0.1366.728/1366.0.1024.728@1366.0.1024.728" timestamp="1586374133989" />
+  </component>
+</project>
