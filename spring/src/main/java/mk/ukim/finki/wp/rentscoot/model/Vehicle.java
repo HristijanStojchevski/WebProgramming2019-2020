@@ -1,4 +1,4 @@
 package mk.ukim.finki.wp.rentscoot.model;
 
-public class Vehicles {
+public class Vehicle {
 }
