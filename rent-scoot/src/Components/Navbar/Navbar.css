@@ -1,0 +1,26 @@
+
+.MuiPaper-root{
+    width:100%;
+    z-index: 2;
+    top: 0;
+}
+
+.nav-logo
+{
+	margin: 5px 15px;
+	width: 100%;
+}
+
+.MuiTab-textColorPrimary
+{	
+	font-size: 1.4vw !important; 
+	text-decoration: none;
+	color: #0089ff !important;
+}
+
+.Mui-selected
+{
+	font-weight: bolder !important;
+	color: white !important;
+	border-bottom: 2px solid white !important;
+}
