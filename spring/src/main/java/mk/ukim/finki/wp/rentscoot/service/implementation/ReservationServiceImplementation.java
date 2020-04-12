@@ -1,21 +1,38 @@
 package mk.ukim.finki.wp.rentscoot.service.implementation;
 
 import mk.ukim.finki.wp.rentscoot.model.*;
+import mk.ukim.finki.wp.rentscoot.repository.LocationRepository;
+import mk.ukim.finki.wp.rentscoot.repository.PromotionRepository;
+import mk.ukim.finki.wp.rentscoot.repository.ReservationRepository;
+import mk.ukim.finki.wp.rentscoot.repository.UserRepository;
 import mk.ukim.finki.wp.rentscoot.service.ReservationService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-
+@Service
 public class ReservationServiceImplementation implements ReservationService {
+    private final ReservationRepository reservationRepository;
+    private final LocationRepository locationRepository;
+    private final UserRepository userRepository;
+    private final PromotionRepository promotionRepository;
+
+    public ReservationServiceImplementation(ReservationRepository reservationRepository, LocationRepository locationRepository, UserRepository userRepository, PromotionRepository promotionRepository) {
+        this.reservationRepository = reservationRepository;
+        this.locationRepository = locationRepository;
+        this.userRepository = userRepository;
+        this.promotionRepository = promotionRepository;
+    }
+
     @Override
-    public Reservation createReservation(List<Vehicle> vehicles, Promotion promotion, Location location, User user, LocalDateTime dateSubmitied, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+    public Reservation createReservation(Integer locationId, String modelName, Long userId, String promotionName, LocalDateTime dateSubmited, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         return null;
     }
 
     @Override
-    public Reservation updateReservation(Long id,List<Vehicle> vehicles, Promotion promotion, Location location, User user,LocalDateTime dateSubmited, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+    public Reservation updateReservation(Long id, Integer locationId, String modelName, Long userId, String promotionName, LocalDateTime dateSubmited, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         return null;
     }
 
@@ -53,4 +70,5 @@ public class ReservationServiceImplementation implements ReservationService {
     public List<Reservation> findReservationsByDate(LocalDate date) {
         return null;
     }
+
 }

@@ -2,9 +2,10 @@ package mk.ukim.finki.wp.rentscoot.service.implementation;
 
 import mk.ukim.finki.wp.rentscoot.model.User;
 import mk.ukim.finki.wp.rentscoot.service.UserManagementService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class UserManagementServiceImplementation implements UserManagementService {
     @Override
     public User registerUser(String name, String email, String password) {

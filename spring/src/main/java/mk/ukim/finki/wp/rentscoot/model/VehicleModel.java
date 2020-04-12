@@ -19,7 +19,7 @@ public class VehicleModel {
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 
-    private String descripiton;
+    private String description;
     @NonNull
     private double pricePerMinute;
     @OneToMany(mappedBy = "model")

@@ -1,18 +1,31 @@
 package mk.ukim.finki.wp.rentscoot.service.implementation;
 
-import mk.ukim.finki.wp.rentscoot.model.Location;
 import mk.ukim.finki.wp.rentscoot.model.Vehicle;
 import mk.ukim.finki.wp.rentscoot.model.VehicleModel;
 import mk.ukim.finki.wp.rentscoot.model.VehicleType;
+import mk.ukim.finki.wp.rentscoot.repository.LocationRepository;
+import mk.ukim.finki.wp.rentscoot.repository.VehicleModelRepository;
+import mk.ukim.finki.wp.rentscoot.repository.VehicleRepository;
 import mk.ukim.finki.wp.rentscoot.service.VehicleManagementService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
-
+@Service
 public class VehicleManagementServiceImplementation implements VehicleManagementService {
+    private final VehicleRepository vehicleRepository;
+    private final VehicleModelRepository modelRepository;
+    private final LocationRepository locationRepository;
+
+    public VehicleManagementServiceImplementation(VehicleRepository vehicleRepository, VehicleModelRepository modelRepository, LocationRepository locationRepository) {
+        this.vehicleRepository = vehicleRepository;
+        this.modelRepository = modelRepository;
+        this.locationRepository = locationRepository;
+    }
 
     @Override
-    public Vehicle addVehicle(String serialNo, String description, LocalDate dateBought, VehicleModel model, Location location) {
+    public Vehicle addVehicle(String serialNo, String description, LocalDate dateBought, String modelName, Integer locationId) {
         return null;
     }
 
@@ -32,7 +45,7 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
     }
 
     @Override
-    public Vehicle updateVehicle(String serialNo, String description, LocalDate dateBought, VehicleModel model, Location location, boolean onTheRoad) {
+    public Vehicle updateVehicle(String serialNo, String description, LocalDate dateBought, String modelName, Integer locationId, boolean onTheRoad) {
         return null;
     }
 
@@ -61,4 +74,8 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
         return null;
     }
 
+    @Override
+    public List<Vehicle> findVehiclesBetweenIntervalOnAGivenLocation(Integer locationId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        return null;
+    }
 }

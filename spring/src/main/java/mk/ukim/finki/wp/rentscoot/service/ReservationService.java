@@ -8,9 +8,9 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface ReservationService {
-    Reservation createReservation(List<Vehicle> vehicles, Promotion promotion, Location location, User user, LocalDateTime dateSubmited, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime);
+    Reservation createReservation(Integer locationId, String modelName,Long userId,String promotionName, LocalDateTime dateSubmited, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime);
 
-    Reservation updateReservation(Long id,List<Vehicle> vehicles, Promotion promotion, Location location, User user,LocalDateTime dateSubmited, LocalDate startDate, LocalTime startTime,LocalDate endDate,LocalTime endTime);
+    Reservation updateReservation(Long id,Integer locationId, String modelName,Long userId,String promotionName,LocalDateTime dateSubmited, LocalDate startDate, LocalTime startTime,LocalDate endDate,LocalTime endTime);
 
     List<Reservation> getAllReservations();
 

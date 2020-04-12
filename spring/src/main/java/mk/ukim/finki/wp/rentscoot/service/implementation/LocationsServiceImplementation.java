@@ -34,31 +34,40 @@ public class LocationsServiceImplementation implements LocationsService {
     @Override
     public Location updateLocation(Integer id,String name, String country, String city, String municipality, String address, String description, Point coordinates, Point popupCoordinates){
         Location oldLocation = this.locationRepository.findLocationById(id).orElseThrow(InvalidLocationException::new);
-        return null;
+        oldLocation.setName(name);
+        oldLocation.setCountry(country);
+        oldLocation.setCity(city);
+        oldLocation.setMunicipality(municipality);
+        oldLocation.setAddress(address);
+        oldLocation.setDescription(description);
+        oldLocation.setCoordinates(coordinates);
+        oldLocation.setPopupCoordinates(popupCoordinates);
+        return this.locationRepository.createLocation(oldLocation);
     }
 
     @Override
     public List<Location> getAllLocations() {
-        return null;
+        return this.locationRepository.getAllLocations();
     }
 
     @Override
     public void deleteLocation(Integer id) {
-
+        Location locDelete = this.locationRepository.findLocationById(id).orElseThrow(InvalidLocationException::new);
+        this.locationRepository.deleteLocation(locDelete);
     }
 
     @Override
     public Location getLocation(Integer id) {
-        return null;
+        return this.locationRepository.findLocationById(id).orElseThrow(InvalidLocationException::new);
     }
 
     @Override
     public List<Location> findLocationsByCityOrCountry(String place,String country) {
-        return null;
+        return this.locationRepository.findLocationsByCityOrCountry(place, country);
     }
 
     @Override
     public List<Location> searchLocations(String term) {
-        return null;
+        return this.locationRepository.searchLocations(term);
     }
 }
