@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -23,4 +24,15 @@ public class Promotion {
 
     @OneToMany(mappedBy = "promotion")
     private List<Reservation> reservations;
+
+    private LocalDate validFrom;
+
+    private LocalDate validTo;
+//
+//    public void addReservation(Reservation reservation){
+//        this.reservations.add(reservation);
+//    }
+//    public void removeReservation(Reservation reservation){
+//        this.reservations.remove(reservation);
+//    }
 }

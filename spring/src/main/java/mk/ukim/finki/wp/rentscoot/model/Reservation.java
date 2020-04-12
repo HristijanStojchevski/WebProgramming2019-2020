@@ -4,7 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -15,14 +17,16 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Vehicle vehicle;
+    @ManyToMany(mappedBy = "reservations")
+    private List<Vehicle> vehicles;
     @ManyToOne
     private Promotion promotion;
     @ManyToOne
     private Location location;
     @ManyToOne
     private User client;
+
+    private LocalDateTime dateSubmited;
 
     private LocalDate dateStart;
 
@@ -33,4 +37,13 @@ public class Reservation {
     private LocalTime timeEnd;
 
     private double totalPrice;
+
+//    public void addVehicle(Vehicle vehicle){
+//        this.vehicles.add(vehicle);
+//        vehicle.getReservations().add(this);
+//    }
+//    public void removeVehicle(Vehicle vehicle){
+//        this.vehicles.remove(vehicle);
+//        vehicle.getReservations().remove(this);
+//    }
 }

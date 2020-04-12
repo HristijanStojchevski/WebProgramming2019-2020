@@ -15,15 +15,22 @@ import java.util.List;
 public class VehicleModel {
     @Id
     private String modelName;
-    /*
+
     @Enumerated(EnumType.STRING)
     private VehicleType type;
-    */
+
     private String descripiton;
     @NonNull
-    private double pricePerHour;
+    private double pricePerMinute;
     @OneToMany(mappedBy = "model")
     private List<Vehicle> vehicles;
 
-    private int amountAvailable;
+    private int amountAvailable=0;
+
+//    void addVehicle(Vehicle vehicle){
+//        this.vehicles.add(vehicle);
+//    }
+//    void removeVehicle(Vehicle vehicle){
+//        this.vehicles.remove(vehicle);
+//    }
 }

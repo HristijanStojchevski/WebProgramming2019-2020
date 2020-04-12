@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.security.AuthProvider;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,5 +44,11 @@ public class User {
     private AuthProvider provider;
 
     private String providerID;*/
+//    public void addReservation(Reservation reservation){
+//        this.reservation.add(reservation);
+//    }
+//    public void removeReservation(Reservation reservation){
+//        this.reservation.remove(reservation);
+//    }
 
 }

@@ -27,8 +27,8 @@ public class Location {
 
     private String description;
 
-    //private Long latitude;
-    //private Long longitude;
+//    private Long latitude;
+//    private Long longitude;
     @NonNull
     private Point coordinates;
     @NonNull
@@ -40,4 +40,16 @@ public class Location {
     @OneToMany(mappedBy = "location")
     private List<Reservation> reservations;
 
+//    public void addVehicle(Vehicle vehicle){
+//        this.vehicles.add(vehicle);
+//    }
+//    public void removeVehicle(Vehicle vehicle){
+//        this.vehicles.remove(vehicle);
+//    }
+//    public void addReservation(Reservation reservation){
+//        this.reservations.add(reservation);
+//    }
+//    public void removeReservation(Reservation reservation){
+//        this.reservations.remove(reservation);
+//    }
 }

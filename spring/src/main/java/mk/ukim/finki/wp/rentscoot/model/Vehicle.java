@@ -25,6 +25,8 @@ public class Vehicle {
     private VehicleModel model;
     @ManyToOne
     private Location location;
-    @OneToMany(mappedBy = "vehicle")
+    @ManyToMany(mappedBy = "vehicles")
     private List<Reservation> reservations;
+    @NonNull
+    private boolean onTheRoad=false;
 }
