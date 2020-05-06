@@ -22,11 +22,11 @@ public class User {
     @OneToMany(mappedBy = "client")
     private List<Reservation> reservation;
 
-    @NonNull
+    @NotNull
     private String name;
 
     @Email
-    @NonNull
+    @NotNull
     private String email;
 
     /*@NonNull
@@ -35,7 +35,7 @@ public class User {
     @JsonIgnore
     private String password;
 
-    @NonNull
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Role role = Role.CLIENT;
 
@@ -44,11 +44,4 @@ public class User {
     private AuthProvider provider;
 
     private String providerID;*/
-//    public void addReservation(Reservation reservation){
-//        this.reservation.add(reservation);
-//    }
-//    public void removeReservation(Reservation reservation){
-//        this.reservation.remove(reservation);
-//    }
-
 }

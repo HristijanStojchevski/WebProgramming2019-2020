@@ -14,7 +14,7 @@ public interface VehicleManagementService {
     List<VehicleModel> getAllModels();
 
     Vehicle updateVehicle(String serialNo, String description, LocalDate dateBought, String modelName,Integer locationId,boolean onTheRoad);
-    VehicleModel updateModel(String name, String  description, double pricePerMinute, VehicleType type);
+    VehicleModel updateModel(String oldName,String name, String  description, double pricePerMinute, VehicleType type);
 
     void deleteVehicle(String serialNo);
     void deleteModel(String modelName);

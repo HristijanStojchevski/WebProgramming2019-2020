@@ -1,12 +1,18 @@
 package mk.ukim.finki.wp.rentscoot.service.implementation;
 
 import mk.ukim.finki.wp.rentscoot.model.Promotion;
+import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidPromotionException;
 import mk.ukim.finki.wp.rentscoot.repository.PromotionRepository;
 import mk.ukim.finki.wp.rentscoot.service.PromotionService;
+import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PromotionServiceImplementation implements PromotionService {
     private final PromotionRepository promotionRepository;
@@ -28,36 +34,45 @@ public class PromotionServiceImplementation implements PromotionService {
 
     @Override
     public List<Promotion> getAllPromotions() {
-        return null;
+        return this.promotionRepository.getAllPromotions();
     }
 
     @Override
     public Promotion getPromotion(String name) {
-        return null;
+        return this.promotionRepository.findById(name).orElseThrow(InvalidPromotionException::new);
     }
 
     @Override
     public Promotion updatePromotion(String name, String description, double discount, LocalDate validFrom, LocalDate validTo) {
-        return null;
+        Promotion promotion = this.promotionRepository.findById(name).orElseThrow(InvalidPromotionException::new);
+        promotion.setDescription(description);
+        promotion.setDiscount(discount);
+        promotion.setValidFrom(validFrom);
+        promotion.setValidTo(validTo);
+        return this.promotionRepository.createPromotion(promotion);
     }
 
     @Override
     public void deletePromotion(String name) {
-
+        Promotion promotion = this.promotionRepository.findById(name).orElseThrow(InvalidPromotionException::new);
+        this.promotionRepository.deletePromotion(promotion);
     }
 
     @Override
     public List<Promotion> findBestDiscountPromotions(double discount) {
-        return null;
+        return this.promotionRepository.findBestDiscountPromotions(discount);
     }
 
     @Override
     public Promotion findNewestPromotion() {
-        return null;
+        List<Promotion> allValid = this.promotionRepository.findAllValidPromotions(LocalDate.now());
+        // Natural order supposed to be oldest -> newest.So with reversing we get newest -> oldest. Also there is smarter solution with max
+        return allValid.stream().max(Comparator.comparing(Promotion::getValidFrom)).orElseThrow(InvalidPromotionException::new);
+        //return allValid.stream().sorted(Comparator.comparing(Promotion::getValidFrom,Comparator.nullsLast(Comparator.naturalOrder())).reversed()).findFirst().orElseThrow(InvalidPromotionException::new);
     }
 
     @Override
     public List<Promotion> findAllValidPromotions(LocalDate from) {
-        return null;
+        return this.promotionRepository.findAllValidPromotions(from);
     }
 }

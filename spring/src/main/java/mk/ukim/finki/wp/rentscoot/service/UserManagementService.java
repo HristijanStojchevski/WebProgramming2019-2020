@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.rentscoot.service;
 
+import mk.ukim.finki.wp.rentscoot.model.Reservation;
 import mk.ukim.finki.wp.rentscoot.model.Role;
 import mk.ukim.finki.wp.rentscoot.model.User;
 
@@ -16,14 +17,14 @@ public interface UserManagementService {
 
     List<User> getAllUsers();
 
-    User updateUser(Long id,String name,String email);
+    User updateUser(Long id, String email, String name);
 
     void deleteUser(Long id);
 
     boolean changeUserPassword(Long id,String password); //Should be encripted or done trough another secured service
 
-//    Role setUserRole(User user,Role role);
-//
-//    Role changeUserRole(User user,Role role);
-//
+    User setUserRole(Long userId,Role role);
+
+//    User changeUserRole(Long userId,Role role);
+
 }

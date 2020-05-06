@@ -20,7 +20,7 @@ public class Promotion {
 
     private String description;
     @NonNull
-    private double discount;
+    private double discount; //percentage from 0 to 1
 
     @OneToMany(mappedBy = "promotion")
     private List<Reservation> reservations;
@@ -28,11 +28,5 @@ public class Promotion {
     private LocalDate validFrom;
 
     private LocalDate validTo;
-//
-//    public void addReservation(Reservation reservation){
-//        this.reservations.add(reservation);
-//    }
-//    public void removeReservation(Reservation reservation){
-//        this.reservations.remove(reservation);
-//    }
+
 }
