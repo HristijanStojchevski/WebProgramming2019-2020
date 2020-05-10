@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaUserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl implements UserRepository {
     private final JpaUserRepository repository;
 
-    public JpaUserRepositoryImpl(JpaUserRepository repository) {
+    public UserRepositoryImpl(JpaUserRepository repository) {
         this.repository = repository;
     }
 

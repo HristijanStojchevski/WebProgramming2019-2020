@@ -1,0 +1,703 @@
+#GET http://localhost:8080/api/manage/vehicles
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 200, "Response status is not 200");
+#});
+#
+#%}
+#
+####
+#POST http://localhost:8080/api/manage/vehicles
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 400, "Response status is not 400");
+#});
+#
+#%}
+
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+city: Skopje
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+country: Macedonia
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+city: Skopje
+country: Macedonia
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations?term=Bit
+city: Skopje
+country: Macedonia
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations?term=rekord
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations/1
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/manage/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/manage/locations?name=cityMall
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+### url params
+POST http://localhost:8080/api/manage/locations?name=cityMall,city=Skopje,country=Macedonia,coordinates=22.200,49.501
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("reservationId"), 'Can not find the reservationId');
+  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
+  client.global.set("reservationId", response.body["reservationId"]);
+});
+%}
+### form params
+POST http://localhost:8080/api/manage/locations
+Content-Type: application/x-www-form-urlencoded
+
+name=cityMall&city=Skopje&country=Macedonia&coordinates=22.200,49.501
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("reservationId"), 'Can not find the reservationId');
+  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
+  client.global.set("reservationId", response.body["reservationId"]);
+});
+%}
+
+### Reservations
+GET http://localhost:8080/api/rental/reservations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/reservations
+userEmail: someEmail@email.com
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/reservations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/reservations
+userEmail: test@rentscoot.com
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/reservations
+userEmail: test@rent.com
+locationId: 1
+modelNames: SCOOTER,EBIKE,SCOOTER
+promotion: Women's_day
+Content-Type: application/x-www-form-urlencoded
+
+StarDate= &StartTime= %EndDate= &EndTime=
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Locations
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/locations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}

@@ -90,7 +90,7 @@ public class ManagementApi {
     public VehicleModel getModel(@PathVariable String modelName){
         return this.vehicleService.findModelById(modelName);
     }
-    @GetMapping("/vehicles")
+    @GetMapping("/vehicles") //might be pageable
     public List<Vehicle> getAllVehicles(){
         return this.vehicleService.getAllVehicles();
     }
@@ -148,11 +148,6 @@ public class ManagementApi {
     @GetMapping("vehicles/{serialNo}")
     public Vehicle findVehicleById(@PathVariable String serialNo){
         return this.vehicleService.findVehicleById(serialNo);
-    }
-
-    @GetMapping("/vehicles")// might be pageable
-    public List<Vehicle> getVehicles(){
-        return this.vehicleService.getAllVehicles();
     }
 
 // PROMOTIONS ENDPOINT

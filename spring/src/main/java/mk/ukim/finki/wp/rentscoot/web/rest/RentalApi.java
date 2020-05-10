@@ -52,7 +52,7 @@ public class RentalApi {
         return this.reservationService.findReservationsByUser(userEmail);
     }
 
-    @PostMapping("/reservations")
+    @PostMapping("/reservations") //If there is time do this with User ID
     public Reservation addReservation(@RequestHeader(name="userEmail") String email,
                                       @RequestHeader(name="locationId") int locationId,
                                       @RequestHeader(name="modelNames") String modelNames,

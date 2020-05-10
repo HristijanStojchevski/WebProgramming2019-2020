@@ -1,11 +1,15 @@
 package mk.ukim.finki.wp.rentscoot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,15 +22,17 @@ public class Vehicle {
     private String serialNo;
 
     private String description;
-    @NonNull
+    @NotNull
     private LocalDate dateBought;
     @ManyToOne
-    @NonNull
+    @NotNull
     private VehicleModel model;
     @ManyToOne
     private Location location;
-    @ManyToMany(mappedBy = "vehicles")
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    //@NotFound(action = NotFoundAction.IGNORE)
     private List<Reservation> reservations;
-    @NonNull
+    @NotNull
     private boolean onTheRoad=false;
 }

@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -14,7 +15,7 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NonNull
+    @NotNull
     private String name;
 
     private String country;
@@ -29,9 +30,9 @@ public class Location {
 
 //    private Long latitude;
 //    private Long longitude;
-    @NonNull
+    @NotNull
     private Point coordinates;
-    @NonNull
+    @NotNull
     private Point popupCoordinates;
     //private GeoPosition position;
     @OneToMany(mappedBy = "location")

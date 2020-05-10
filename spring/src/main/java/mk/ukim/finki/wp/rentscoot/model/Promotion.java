@@ -3,9 +3,9 @@ package mk.ukim.finki.wp.rentscoot.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class Promotion {
     private String name;
 
     private String description;
-    @NonNull
+    @NotNull
     private double discount; //percentage from 0 to 1
 
     @OneToMany(mappedBy = "promotion")

@@ -1,11 +1,13 @@
 package mk.ukim.finki.wp.rentscoot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -20,8 +22,9 @@ public class VehicleModel {
     private VehicleType type;
 
     private String description;
-    @NonNull
+    @NotNull
     private double pricePerMinute;
+    @JsonIgnore
     @OneToMany(mappedBy = "model")
     private List<Vehicle> vehicles;
 

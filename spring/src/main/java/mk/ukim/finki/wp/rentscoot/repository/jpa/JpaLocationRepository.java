@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface JpaLocationRepository extends JpaRepository<Location, Integer> {
-    Location findLocationByName(String name);
+    //Location findLocationByName(String name);
 
     List<Location> findByCityOrCountryOrderByCity(String city, String country);
 

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaLocationRepositoryImpl implements LocationRepository {
+public class LocationRepositoryImpl implements LocationRepository {
 
     private final JpaLocationRepository repository;
 
-    public JpaLocationRepositoryImpl(JpaLocationRepository repository) {
+    public LocationRepositoryImpl(JpaLocationRepository repository) {
         this.repository = repository;
     }
 

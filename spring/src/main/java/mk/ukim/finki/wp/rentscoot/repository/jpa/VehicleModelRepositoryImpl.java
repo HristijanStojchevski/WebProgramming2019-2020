@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaVehicleModelRepositoryImpl implements VehicleModelRepository {
+public class VehicleModelRepositoryImpl implements VehicleModelRepository {
     private final JpaVehicleModelRepository repository;
 
-    public JpaVehicleModelRepositoryImpl(JpaVehicleModelRepository repository) {
+    public VehicleModelRepositoryImpl(JpaVehicleModelRepository repository) {
         this.repository = repository;
     }
 

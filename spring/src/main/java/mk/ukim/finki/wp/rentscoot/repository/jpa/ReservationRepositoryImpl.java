@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaReservationRepositoryImpl implements ReservationRepository {
+public class ReservationRepositoryImpl implements ReservationRepository {
     private final JpaReservationRepository repository;
 
-    public JpaReservationRepositoryImpl(JpaReservationRepository repository) {
+    public ReservationRepositoryImpl(JpaReservationRepository repository) {
         this.repository = repository;
     }
 

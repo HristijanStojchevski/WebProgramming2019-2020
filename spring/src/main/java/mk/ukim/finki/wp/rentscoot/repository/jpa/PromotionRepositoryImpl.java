@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaPromotionRepositoryImpl implements PromotionRepository {
+public class PromotionRepositoryImpl implements PromotionRepository {
 
     private final JpaPromotionRepository repository;
 
-    public JpaPromotionRepositoryImpl(JpaPromotionRepository repository) {
+    public PromotionRepositoryImpl(JpaPromotionRepository repository) {
         this.repository = repository;
     }
 

@@ -29,7 +29,7 @@ public class User {
     @NotNull
     private String email;
 
-    /*@NonNull
+    /*@NotNull
     private Boolean emailVerified = false;*/
 
     @JsonIgnore
