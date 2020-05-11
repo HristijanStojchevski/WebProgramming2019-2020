@@ -19,7 +19,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "client")
     private List<Reservation> reservation;
 
     @NotNull

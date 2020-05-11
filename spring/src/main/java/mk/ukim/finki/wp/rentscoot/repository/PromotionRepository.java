@@ -18,4 +18,6 @@ public interface PromotionRepository {
     List<Promotion> findBestDiscountPromotions(double discount);
 
     List<Promotion> findAllValidPromotions(LocalDate dateOfSubmition);
+
+    boolean exists(String name);
 }

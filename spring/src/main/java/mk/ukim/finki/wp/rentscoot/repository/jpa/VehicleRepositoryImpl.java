@@ -34,4 +34,9 @@ public class VehicleRepositoryImpl implements VehicleRepository {
     public Optional<Vehicle> findVehicleById(String serialNo) {
         return this.repository.findById(serialNo);
     }
+
+    @Override
+    public boolean exists(String id) {
+        return this.repository.existsById(id);
+    }
 }

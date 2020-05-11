@@ -13,4 +13,6 @@ public interface VehicleRepository {
     void deleteVehicle(Vehicle vehicle);
 
     Optional<Vehicle> findVehicleById(String serialNo);
+
+    boolean exists(String id);
 }

@@ -25,7 +25,7 @@ public class VehicleModel {
     @NotNull
     private double pricePerMinute;
     @JsonIgnore
-    @OneToMany(mappedBy = "model")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "model")
     private List<Vehicle> vehicles;
 
     private int amountAvailable=0;

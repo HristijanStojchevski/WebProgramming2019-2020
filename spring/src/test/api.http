@@ -1,21 +1,17 @@
-#GET http://localhost:8080/api/manage/vehicles
-#
-#> {%
-#client.test("Request executed successfully", function() {
-#  client.assert(response.status === 200, "Response status is not 200");
-#});
-#
-#%}
-#
-####
-#POST http://localhost:8080/api/manage/vehicles
-#
-#> {%
-#client.test("Request executed successfully", function() {
-#  client.assert(response.status === 400, "Response status is not 400");
-#});
-#
-#%}
+POST http://localhost:8080/api/manage/locations
+Content-Type: application/x-www-form-urlencoded
+
+name=cityMall&city=Skopje&country=Macedonia&coordinates=22.200,49.501
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the locationId');
+  client.global.set("newLocationUrl", response.headers.valueOf("Location"));
+  client.global.set("locationId", response.body["id"]);
+});
+%}
 
 ### Locations
 GET http://localhost:8080/api/rental/locations
@@ -30,6 +26,7 @@ client.test("Request executed successfully", function() {
 ###
 GET http://localhost:8080/api/rental/locations
 city: Skopje
+
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
@@ -40,6 +37,7 @@ client.test("Request executed successfully", function() {
 ###
 GET http://localhost:8080/api/rental/locations
 country: Macedonia
+
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
@@ -51,6 +49,7 @@ client.test("Request executed successfully", function() {
 GET http://localhost:8080/api/rental/locations
 city: Skopje
 country: Macedonia
+
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
@@ -62,6 +61,7 @@ client.test("Request executed successfully", function() {
 GET http://localhost:8080/api/rental/locations?term=Bit
 city: Skopje
 country: Macedonia
+
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
@@ -71,15 +71,7 @@ client.test("Request executed successfully", function() {
 
 ###
 GET http://localhost:8080/api/rental/locations?term=rekord
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
 
-%}
-
-###
-GET http://localhost:8080/api/rental/locations/1
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
@@ -107,18 +99,6 @@ client.test("Request executed successfully", function() {
 
 %}
 
-### url params
-POST http://localhost:8080/api/manage/locations?name=cityMall,city=Skopje,country=Macedonia,coordinates=22.200,49.501
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 201, "Response status is not 201");
-  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
-  client.assert(response.body.hasOwnProperty("reservationId"), 'Can not find the reservationId');
-  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
-  client.global.set("reservationId", response.body["reservationId"]);
-});
-%}
 ### form params
 POST http://localhost:8080/api/manage/locations
 Content-Type: application/x-www-form-urlencoded
@@ -129,9 +109,172 @@ name=cityMall&city=Skopje&country=Macedonia&coordinates=22.200,49.501
 client.test("Request executed successfully", function() {
   client.assert(response.status === 201, "Response status is not 201");
   client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
-  client.assert(response.body.hasOwnProperty("reservationId"), 'Can not find the reservationId');
-  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
-  client.global.set("reservationId", response.body["reservationId"]);
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the locationId');
+  client.global.set("newLocationUrl", response.headers.valueOf("Location"));
+  client.global.set("locationId", response.body["id"]);
+});
+%}
+
+###
+GET {{newLocationUrl}}
+
+> {%
+ client.test("Request executed successfully", function() {
+ client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+PATCH http://localhost:8080/api/manage/locations/{{locationId}}
+Content-Type: application/x-www-form-urlencoded
+
+name=Gtc&city=Skopje&country=Macedonia&coordinates=21,49.501
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the locationId');
+});
+%}
+
+###
+GET {{newLocationUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
+GET http://localhost:8080/api/rental/vehicles/{{locationId}}?startDate=2020-05-10&startTime=10:00:00&endDate=2020-05-10&endTime=14:00:00
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+DELETE {{newLocationUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Promotions
+GET http://localhost:8080/api/rental/promotions?date=2020-05-10
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+### Invalid date input
+GET http://localhost:8080/api/rental/promotions?date=2020
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+### missing header
+GET http://localhost:8080/api/rental/promotions/best
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/promotions/best
+discount: 0.15
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/promotions/newest
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+### missing required param
+POST http://localhost:8080/api/manage/promotions
+Content-Type: application/x-www-form-urlencoded
+
+name=WomansDayPromotion&validFrom=2021-03-06&validTo=2020-03-09
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/manage/promotions
+Content-Type: application/x-www-form-urlencoded
+
+name=HappyMonth&discount=0.1&validFrom=2020-05-01&validTo=2020-05-30
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("name"), 'Can not find the reservationId');
+  client.global.set("newPromotionUrl", response.headers.valueOf("Location"));
+  client.global.set("promotionId", response.body["name"]);
+});
+%}
+
+###
+GET {{newPromotionUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+PATCH http://localhost:8080/api/manage/promotions/{{promotionId}}
+Content-Type: application/x-www-form-urlencoded
+
+description=notEmpty&validFrom=2021-03-03&discount=0.3&validTo=2021-03-09
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("name"), 'Can not find the promotionId');
+});
+%}
+
+###
+GET {{newPromotionUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
 });
 %}
 
@@ -148,6 +291,7 @@ client.test("Request executed successfully", function() {
 ###
 GET http://localhost:8080/api/rental/reservations
 userEmail: someEmail@email.com
+
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
@@ -168,16 +312,16 @@ client.test("Request executed successfully", function() {
 ###
 POST http://localhost:8080/api/rental/reservations
 userEmail: test@rentscoot.com
+
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 400, "Response status is not 400");
 });
 
 %}
-
-###
+### Invalid email
 POST http://localhost:8080/api/rental/reservations
-userEmail: test@rent.com
+userEmail: test
 locationId: 1
 modelNames: SCOOTER,EBIKE,SCOOTER
 promotion: Women's_day
@@ -192,125 +336,94 @@ client.test("Request executed successfully", function() {
 
 %}
 
-###
-GET http://localhost:8080/api/rental/locations
+### Error here
+POST http://localhost:8080/api/rental/reservations
+userEmail: test@rent.com
+locationId: 1
+modelNames: cheapScooter,cheapScooter
+promotion: HappyMonth
+Content-Type: application/x-www-form-urlencoded
+
+startDate=2020-05-11&startTime=14:00:00&endDate=2020-05-11&endTime=16:00:00
 
 > {%
 client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
 });
-
 %}
 
 ###
-POST http://localhost:8080/api/rental/locations
+POST http://localhost:8080/api/manage/reservations
+userEmail: test@rent.com
+locationId: 15
+modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
+promotion: Women's_day
+Content-Type: application/x-www-form-urlencoded
+
+startDate=2020-05-10&startTime=14:00:00&endDate=2020-05-10&endTime=16:00:00
 
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 400, "Response status is not 400");
 });
-
-%}
-### Locations
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
 %}
 
 ###
-GET http://localhost:8080/api/rental/locations
+POST http://localhost:8080/api/manage/reservations
+userEmail: test@rent.com
+locationId: 1
+modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
+promotion: FakePromotion
+Content-Type: application/x-www-form-urlencoded
 
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
+startDate=2020-05-10&startTime=14:00:00&endDate=2020-05-10&endTime=16:00:00
 
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 400, "Response status is not 400");
 });
-
-%}
-### Locations
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
 %}
 
 ###
-GET http://localhost:8080/api/rental/locations
+POST http://localhost:8080/api/manage/reservations
+userEmail: test@rent.com
+locationId: 1
+modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
+promotion: HappyMonth
+Content-Type: application/x-www-form-urlencoded
 
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
+startDate=2020-05-10&startTime=14:00:00&endTime=16:00:00
 
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 400, "Response status is not 400");
 });
-
 %}
-### Locations
-GET http://localhost:8080/api/rental/locations
+
+### Error
+POST http://localhost:8080/api/manage/reservations
+userEmail: test@rent.com
+locationId: 1
+modelNames: cheapScooter
+promotion: HappyMonth
+Content-Type: application/x-www-form-urlencoded
+
+startDate=2020-05-11&startTime=14:00:00&endDate=2020-05-11&endTime=16:00:00
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
+  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
+  client.global.set("reservationId", response.body["id"]);
+});
+%}
+
+###
+GET {{newReservationUrl}}
 
 > {%
 client.test("Request executed successfully", function() {
@@ -320,7 +433,42 @@ client.test("Request executed successfully", function() {
 %}
 
 ###
-GET http://localhost:8080/api/rental/locations
+PATCH http://localhost:8080/api/manage/reservations/{{reserationId}}
+userEmail: test@rent.com
+locationId: 1
+modelNames: SCOOTER,EBIKE
+promotion: WomansDayPromotion
+Content-Type: application/x-www-form-urlencoded
+
+StarDate=2020-05-11&StartTime=14:00:00&EndDate=2020-05-11&EndTime=18:00:00
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
+});
+%}
+
+###
+GET {{newReservationUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
+DELETE {{newReservationUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Model and vehicles
+GET http://localhost:8080/api/rental/models
 
 > {%
 client.test("Request executed successfully", function() {
@@ -330,7 +478,7 @@ client.test("Request executed successfully", function() {
 %}
 
 ###
-GET http://localhost:8080/api/rental/locations
+GET http://localhost:8080/api/rental/vehicles/1?startDate=2020-05-10&startTime=10:00:00&endDate=2020-05-10&endTime=14:00:00
 
 > {%
 client.test("Request executed successfully", function() {
@@ -340,261 +488,7 @@ client.test("Request executed successfully", function() {
 %}
 
 ###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-### Locations
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-### Locations
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-### Locations
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-### Locations
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}### Locations
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
+GET http://localhost:8080/api/rental/vehicles/2?startDate=2020-05-10&startTime=10:00:00&endTime=14:00:00
 
 > {%
 client.test("Request executed successfully", function() {
@@ -603,101 +497,209 @@ client.test("Request executed successfully", function() {
 
 %}
 
-### Locations
-GET http://localhost:8080/api/rental/locations
+####
+#GET http://localhost:8080/api/rental/vehicles/2?startDate=2020-05-10&startTime=10:00:00&endDate=2020-05-10&endTime=14:00:00
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 200, "Response status is not 200");
+#});
+#
+#%}
 
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
+### missing params
+POST http://localhost:8080/api/manage/models
+Content-Type: application/x-www-form-urlencoded
 
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
-
+name=commonScooter&vehicleType=SCOOTER
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 400, "Response status is not 400");
 });
 
 %}
-### Locations
-GET http://localhost:8080/api/rental/locations
+
+###
+POST http://localhost:8080/api/manage/models
+Content-Type: application/x-www-form-urlencoded
+
+name=commonScooter&vehicleType=SCOOTER&description=bestForPrice&pricePerMinute=10
 
 > {%
 client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("modelName"), 'Can not find the modelId');
+  client.global.set("newModelUrl", response.headers.valueOf("Location"));
+  client.global.set("modelId", response.body["modelName"]);
 });
-
 %}
 
 ###
-GET http://localhost:8080/api/rental/locations
+POST http://localhost:8080/api/manage/models
+Content-Type: application/x-www-form-urlencoded
+
+name=deleteScooter&vehicleType=SCOOTER&description=bestForPrice&pricePerMinute=10
 
 > {%
 client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("modelName"), 'Can not find the modelId');
+  client.global.set("newModel1Url", response.headers.valueOf("Location"));
+  client.global.set("model1Id", response.body["modelName"]);
 });
-
 %}
 
-###
-GET http://localhost:8080/api/rental/locations
+### missing serial Number
+POST http://localhost:8080/api/manage/vehicles
+Content-Type: application/x-www-form-urlencoded
 
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/locations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/locations
-
+dateBought=2020-01-15&description=GreatCondition&modelName=commonScooter
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 400, "Response status is not 400");
 });
 
+%}
+
+###
+POST http://localhost:8080/api/manage/vehicles
+Content-Type: application/x-www-form-urlencoded
+
+serialNo=VIN-205&dateBought=2020-01-15&description=GreatCondition&modelName=commonScooter&locationId=1
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("serialNo"), 'Can not find the vehicleId');
+  client.global.set("newVehicleUrl", response.headers.valueOf("Location"));
+  client.global.set("vehicleId", response.body["serialNo"]);
+});
+%}
+
+###
+GET {{newModelUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET {{newVehicleUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+### missing params
+PATCH http://localhost:8080/api/manage/models/{{modelId}}
+Content-Type: application/x-www-form-urlencoded
+
+vehicleType=SCOOTER&description=bestForPrice&pricePerMinute=20
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+  });
+%}
+
+###
+PATCH http://localhost:8080/api/manage/models/{{modelId}}
+Content-Type: application/x-www-form-urlencoded
+
+name=commonScooter&vehicleType=SCOOTER&description=changed&pricePerMinute=15
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("modelName"), 'Can not find the modelId');
+});
+%}
+
+###
+GET {{newModelUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+### missing params
+PATCH http://localhost:8080/api/manage/vehicles/{{vehicleId}}
+Content-Type: application/x-www-form-urlencoded
+
+serialNo=VIN-205&dateBought=2020-01-15&decsription=GreatCondition
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+  });
+%}
+
+### Error
+PATCH http://localhost:8080/api/manage/vehicles/{{vehicleId}}
+Content-Type: application/x-www-form-urlencoded
+
+dateBought=2020-01-15&modelName=cheapScooter&locationId=1&onTheRoad=true
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("serialNo"), 'Can not find the vehicleId');
+});
+%}
+
+###
+GET {{newVehicleUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Has vehicles assigned
+DELETE {{newModelUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+%}
+
+### Hasn't got any vehicles assigned
+DELETE {{newModel1Url}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
+DELETE {{newVehicleUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
+DELETE {{newPromotionUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
 %}

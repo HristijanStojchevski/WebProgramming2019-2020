@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.rentscoot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.geo.Point;
 
@@ -35,10 +36,10 @@ public class Location {
     @NotNull
     private Point popupCoordinates;
     //private GeoPosition position;
-    @OneToMany(mappedBy = "location")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "location")
     private List<Vehicle> vehicles;
-
-    @OneToMany(mappedBy = "location")
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "location")
     private List<Reservation> reservations;
 
 //    public void addVehicle(Vehicle vehicle){

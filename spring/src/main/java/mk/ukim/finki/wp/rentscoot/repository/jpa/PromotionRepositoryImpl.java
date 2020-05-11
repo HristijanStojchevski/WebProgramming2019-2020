@@ -46,4 +46,9 @@ public class PromotionRepositoryImpl implements PromotionRepository {
     public List<Promotion> findAllValidPromotions(LocalDate from) {
         return this.repository.findAllByValidFromBeforeOrderByDiscountDesc(from);
     }
+
+    @Override
+    public boolean exists(String name) {
+        return this.repository.existsById(name);
+    }
 }

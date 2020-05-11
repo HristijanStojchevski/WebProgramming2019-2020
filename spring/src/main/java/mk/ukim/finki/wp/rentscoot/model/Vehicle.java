@@ -27,6 +27,7 @@ public class Vehicle {
     @ManyToOne
     @NotNull
     private VehicleModel model;
+    @JsonIgnore //Only for client app. For management app you will need the location
     @ManyToOne
     private Location location;
     @JsonIgnore

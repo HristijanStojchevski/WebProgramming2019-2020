@@ -1,10 +1,14 @@
 package mk.ukim.finki.wp.rentscoot.web.rest;
 
 import mk.ukim.finki.wp.rentscoot.model.*;
+import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidLocationException;
+import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidUserException;
 import mk.ukim.finki.wp.rentscoot.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,12 +36,12 @@ public class RentalApi {
         this.userService = userService;
     }
 // LOCATIONS ENDPOINT
-    @GetMapping("/locations")
-    public List<Location> getAllLocations(@RequestHeader(name="city", defaultValue = "",required = false) String city,
-                                          @RequestHeader(name="country", defaultValue = "",required = false) String country,
+    @GetMapping(value = "/locations")
+    public List<Location> getAllLocations(@RequestHeader(name="city",required = false) String city,
+                                          @RequestHeader(name="country",required = false) String country,
                                           @RequestParam(value = "term",required = false) String term){
         if(term!=null) return this.locationsService.searchLocations(term);
-        if(city.length()>=1 || country.length()>=1) return this.locationsService.findLocationsByCityOrCountry(city,country);
+        if(city!=null || country!=null) return this.locationsService.findLocationsByCityOrCountry(city,country);
         return this.locationsService.getAllLocations();
     }
 
@@ -53,22 +57,31 @@ public class RentalApi {
     }
 
     @PostMapping("/reservations") //If there is time do this with User ID
+    @ResponseStatus(HttpStatus.CREATED)
     public Reservation addReservation(@RequestHeader(name="userEmail") String email,
                                       @RequestHeader(name="locationId") int locationId,
                                       @RequestHeader(name="modelNames") String modelNames,
                                       @RequestHeader(name = "promotion") String promotion,
-                                      @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                      @RequestParam("startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
-                                      @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-                                      @RequestParam("endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
+                                      @RequestParam(name = "startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                      @RequestParam(name = "startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
+                                      @RequestParam(name = "endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                      @RequestParam(name = "endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
                                       HttpServletResponse response,
                                       UriComponentsBuilder builder){
         //list of models ex: bike,bike,scoot,scoot,scoot
         String[] modelName = modelNames.split(",");
         User user = this.userService.getUserByEmail(email);
-        Reservation result = this.reservationService.createReservation(locationId,modelName,user.getId(),promotion,startDate,startTime,endDate,endTime);
-        response.setHeader("Location",builder.path("/api/rental/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
-        return result;
+        try {
+            if (user != null) {
+                Reservation result = this.reservationService.createReservation(locationId, modelName, user.getId(), promotion, startDate, startTime, endDate, endTime);
+                response.setHeader("Location", builder.path("/api/rental/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
+                return result;
+            } else throw new InvalidUserException();
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.BAD_GATEWAY.value());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
     }
 // PROMOTIONS ENDPOINT
     @GetMapping("/promotions")
@@ -103,7 +116,12 @@ public class RentalApi {
                                                                       @RequestParam(name = "startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)LocalTime startTime,
                                                                       @RequestParam(name = "endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate endDate,
                                                                       @RequestParam(name = "endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)LocalTime endTime){
-        return this.vehicleService.findVehiclesBetweenIntervalOnAGivenLocation(locationId,startDate,startTime,endDate,endTime);
+        try{
+            return this.vehicleService.findVehiclesBetweenIntervalOnAGivenLocation(locationId,startDate,startTime,endDate,endTime);
+        }
+        catch (InvalidLocationException ex){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"There is no location with the provided id");
+        }
     }
 
 // USERS ENDPOINT

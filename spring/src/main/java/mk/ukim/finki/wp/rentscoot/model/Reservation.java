@@ -17,7 +17,7 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "reservations")
+    @ManyToMany(fetch = FetchType.EAGER,mappedBy = "reservations")
     private List<Vehicle> vehicles;
     @ManyToOne
     private Promotion promotion;

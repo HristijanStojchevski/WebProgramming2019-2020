@@ -45,4 +45,9 @@ public class LocationRepositoryImpl implements LocationRepository {
     public List<Location> searchLocations(String term) {
         return this.repository.searchLocations(term);
     }
+
+    @Override
+    public boolean exists(Integer id) {
+        return this.repository.existsById(id);
+    }
 }

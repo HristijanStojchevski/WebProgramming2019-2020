@@ -6,11 +6,14 @@ import mk.ukim.finki.wp.rentscoot.model.VehicleModel;
 import mk.ukim.finki.wp.rentscoot.model.VehicleType;
 import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidLocationException;
 import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidVehicleException;
+import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidVehicleModelException;
 import mk.ukim.finki.wp.rentscoot.repository.LocationRepository;
 import mk.ukim.finki.wp.rentscoot.repository.VehicleModelRepository;
 import mk.ukim.finki.wp.rentscoot.repository.VehicleRepository;
 import mk.ukim.finki.wp.rentscoot.service.VehicleManagementService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -79,12 +82,28 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
     @Override
     public VehicleModel updateModel(String oldName,String name, String description, double pricePerMinute, VehicleType type) {
         VehicleModel vehicleModel = this.modelRepository.findModelById(oldName).orElseThrow(InvalidVehicleException::new);
-        vehicleModel.setDescription(description);
-        vehicleModel.setPricePerMinute(pricePerMinute);
-        vehicleModel.setType(type);
-        this.modelRepository.deleteModel(vehicleModel);
-        vehicleModel.setModelName(name);
-        return this.modelRepository.addModel(vehicleModel);
+        if(vehicleModel.getModelName().compareTo(name)==0){
+            vehicleModel.setDescription(description);
+            vehicleModel.setPricePerMinute(pricePerMinute);
+            vehicleModel.setType(type);
+            return this.modelRepository.addModel(vehicleModel);
+        }
+        else {
+            vehicleModel.setModelName(name);
+            vehicleModel.setType(type);
+            vehicleModel.setPricePerMinute(pricePerMinute);
+            vehicleModel.setDescription(description);
+            this.modelRepository.addModel(vehicleModel);
+            vehicleModel.getVehicles().forEach(vehicle -> {
+                vehicle.setModel(vehicleModel);
+                if(vehicle.isOnTheRoad()){
+                    int a = vehicleModel.getAmountAvailable();
+                    vehicleModel.setAmountAvailable(a+1);
+                }
+            });
+            this.modelRepository.deleteModel(this.modelRepository.findModelById(oldName).orElseThrow(InvalidVehicleModelException::new));
+            return this.modelRepository.addModel(vehicleModel);
+        }
     }
 
     @Override
@@ -96,7 +115,8 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
     @Override
     public void deleteModel(String modelName) {
         VehicleModel vehicleModel = this.modelRepository.findModelById(modelName).orElseThrow(InvalidVehicleException::new);
-        this.modelRepository.addModel(vehicleModel);
+        if(vehicleModel.getVehicles().size()==0)this.modelRepository.deleteModel(vehicleModel);
+        else throw new InvalidVehicleModelException("Vehicle model can't be deleted if vehicles from that model are still being used.");
     }
 
     @Override
@@ -111,8 +131,11 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
 
     @Override
     public List<Vehicle> findVehiclesBetweenIntervalOnAGivenLocation(Integer locationId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        List<Vehicle> vehiclesOnLocation = this.vehicleRepository.getAllVehicles().stream().filter(vehicle -> locationId.equals(vehicle.getLocation().getId())).collect(Collectors.toList());
-        return vehiclesOnLocation.stream().filter(isAvailable(startDate,startTime,endDate,endTime)).collect(Collectors.toList());
+        if(this.locationRepository.exists(locationId)) {
+            List<Vehicle> vehiclesOnLocation = this.vehicleRepository.getAllVehicles().stream().filter(vehicle -> vehicle.getLocation()!=null && locationId.equals(vehicle.getLocation().getId())).collect(Collectors.toList());
+            return vehiclesOnLocation.stream().filter(isAvailable(startDate, startTime, endDate, endTime)).collect(Collectors.toList());
+        }
+        else throw new InvalidLocationException();
     }
     private Predicate<Vehicle> isAvailable(LocalDate startDate,LocalTime startTime,LocalDate endDate,LocalTime endTime) {
         return  v -> v.getReservations().stream()
