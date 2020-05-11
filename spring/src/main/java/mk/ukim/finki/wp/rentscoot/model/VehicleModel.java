@@ -30,9 +30,10 @@ public class VehicleModel {
 
     private int amountAvailable=0;
 
-//    void addVehicle(Vehicle vehicle){
-//        this.vehicles.add(vehicle);
-//    }
+    public void addVehicle(Vehicle vehicle){
+        this.vehicles.add(vehicle);
+        //vehicle.setModel(this);
+    }
 //    void removeVehicle(Vehicle vehicle){
 //        this.vehicles.remove(vehicle);
 //    }

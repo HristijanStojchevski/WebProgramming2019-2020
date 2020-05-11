@@ -1,6 +1,10 @@
 package mk.ukim.finki.wp.rentscoot.model;
 
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,13 +21,15 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.EAGER,mappedBy = "reservations")
+    @ManyToMany(mappedBy = "reservations",fetch = FetchType.EAGER)
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Vehicle> vehicles;
     @ManyToOne
     private Promotion promotion;
     @ManyToOne
     private Location location;
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE) // when a client is deleted the Reservation will be deleted also
     private User client;
 
     private LocalDateTime dateSubmited;

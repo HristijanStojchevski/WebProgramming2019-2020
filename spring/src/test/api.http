@@ -13,6 +13,42 @@ client.test("Request executed successfully", function() {
 });
 %}
 
+###
+POST http://localhost:8080/api/manage/users
+name: Tester
+email: test@rent.com
+password: password
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the locationId');
+  client.global.set("newUserUrl", response.headers.valueOf("Location"));
+  client.global.set("userId", response.body["id"]);
+});
+%}
+
+###
+GET http://localhost:8080/api/manage/users/id/{{userId}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/manage/users/email/test@rent.com
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
 ### Locations
 GET http://localhost:8080/api/rental/locations
 
@@ -166,6 +202,58 @@ client.test("Request executed successfully", function() {
 });
 %}
 
+### Set some vehicles to location
+PATCH http://localhost:8080/api/manage/vehicles/COVID-17
+Content-Type: application/x-www-form-urlencoded
+
+dateBought=2020-01-15&modelName=cheapScooter&locationId=1&onTheRoad=true
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("serialNo"), 'Can not find the vehicleId');
+});
+%}
+
+### Set some vehicles to location
+PATCH http://localhost:8080/api/manage/vehicles/COVID-18
+Content-Type: application/x-www-form-urlencoded
+
+dateBought=2018-01-15&modelName=cheapScooter&locationId=1&onTheRoad=true
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("serialNo"), 'Can not find the vehicleId');
+});
+%}
+
+### Set some vehicles to location
+PATCH http://localhost:8080/api/manage/vehicles/COVID-19
+Content-Type: application/x-www-form-urlencoded
+
+dateBought=2020-01-15&modelName=cheapScooter&locationId=1&onTheRoad=true
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("serialNo"), 'Can not find the vehicleId');
+});
+%}
+
+### Set some vehicles to location
+PATCH http://localhost:8080/api/manage/vehicles/COVID-20
+Content-Type: application/x-www-form-urlencoded
+
+dateBought=2020-03-15&modelName=cheapScooter&locationId=1&onTheRoad=true
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("serialNo"), 'Can not find the vehicleId');
+});
+%}
+
 ### Promotions
 GET http://localhost:8080/api/rental/promotions?date=2020-05-10
 
@@ -257,209 +345,7 @@ client.test("Request executed successfully", function() {
 %}
 
 ###
-PATCH http://localhost:8080/api/manage/promotions/{{promotionId}}
-Content-Type: application/x-www-form-urlencoded
-
-description=notEmpty&validFrom=2021-03-03&discount=0.3&validTo=2021-03-09
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-  client.assert(response.body.hasOwnProperty("name"), 'Can not find the promotionId');
-});
-%}
-
-###
 GET {{newPromotionUrl}}
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-%}
-
-### Reservations
-GET http://localhost:8080/api/rental/reservations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-
-###
-GET http://localhost:8080/api/rental/reservations
-userEmail: someEmail@email.com
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/reservations
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-
-###
-POST http://localhost:8080/api/rental/reservations
-userEmail: test@rentscoot.com
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-### Invalid email
-POST http://localhost:8080/api/rental/reservations
-userEmail: test
-locationId: 1
-modelNames: SCOOTER,EBIKE,SCOOTER
-promotion: Women's_day
-Content-Type: application/x-www-form-urlencoded
-
-StarDate= &StartTime= %EndDate= &EndTime=
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-
-%}
-
-### Error here
-POST http://localhost:8080/api/rental/reservations
-userEmail: test@rent.com
-locationId: 1
-modelNames: cheapScooter,cheapScooter
-promotion: HappyMonth
-Content-Type: application/x-www-form-urlencoded
-
-startDate=2020-05-11&startTime=14:00:00&endDate=2020-05-11&endTime=16:00:00
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 201, "Response status is not 201");
-  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
-  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
-});
-%}
-
-###
-POST http://localhost:8080/api/manage/reservations
-userEmail: test@rent.com
-locationId: 15
-modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
-promotion: Women's_day
-Content-Type: application/x-www-form-urlencoded
-
-startDate=2020-05-10&startTime=14:00:00&endDate=2020-05-10&endTime=16:00:00
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-%}
-
-###
-POST http://localhost:8080/api/manage/reservations
-userEmail: test@rent.com
-locationId: 1
-modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
-promotion: FakePromotion
-Content-Type: application/x-www-form-urlencoded
-
-startDate=2020-05-10&startTime=14:00:00&endDate=2020-05-10&endTime=16:00:00
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-%}
-
-###
-POST http://localhost:8080/api/manage/reservations
-userEmail: test@rent.com
-locationId: 1
-modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
-promotion: HappyMonth
-Content-Type: application/x-www-form-urlencoded
-
-startDate=2020-05-10&startTime=14:00:00&endTime=16:00:00
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 400, "Response status is not 400");
-});
-%}
-
-### Error
-POST http://localhost:8080/api/manage/reservations
-userEmail: test@rent.com
-locationId: 1
-modelNames: cheapScooter
-promotion: HappyMonth
-Content-Type: application/x-www-form-urlencoded
-
-startDate=2020-05-11&startTime=14:00:00&endDate=2020-05-11&endTime=16:00:00
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 201, "Response status is not 201");
-  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
-  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
-  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
-  client.global.set("reservationId", response.body["id"]);
-});
-%}
-
-###
-GET {{newReservationUrl}}
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-
-%}
-
-###
-PATCH http://localhost:8080/api/manage/reservations/{{reserationId}}
-userEmail: test@rent.com
-locationId: 1
-modelNames: SCOOTER,EBIKE
-promotion: WomansDayPromotion
-Content-Type: application/x-www-form-urlencoded
-
-StarDate=2020-05-11&StartTime=14:00:00&EndDate=2020-05-11&EndTime=18:00:00
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
-});
-%}
-
-###
-GET {{newReservationUrl}}
-
-> {%
-client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not 200");
-});
-%}
-
-###
-DELETE {{newReservationUrl}}
 
 > {%
 client.test("Request executed successfully", function() {
@@ -603,7 +489,7 @@ client.test("Request executed successfully", function() {
 PATCH http://localhost:8080/api/manage/models/{{modelId}}
 Content-Type: application/x-www-form-urlencoded
 
-vehicleType=SCOOTER&description=bestForPrice&pricePerMinute=20
+description=bestForPrice&pricePerMinute=20
 
 > {%
 client.test("Request executed successfully", function() {
@@ -646,7 +532,7 @@ client.test("Request executed successfully", function() {
   });
 %}
 
-### Error
+###
 PATCH http://localhost:8080/api/manage/vehicles/{{vehicleId}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -668,8 +554,200 @@ client.test("Request executed successfully", function() {
 });
 %}
 
+### Reservations
+GET http://localhost:8080/api/rental/reservations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+GET http://localhost:8080/api/rental/reservations
+userEmail: someEmail@email.com
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/reservations
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/reservations
+userEmail: test@rentscoot.com
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+### Invalid email
+POST http://localhost:8080/api/rental/reservations
+userEmail: test
+locationId: 1
+modelNames: SCOOTER,EBIKE,SCOOTER
+promotion: Women's_day
+Content-Type: application/x-www-form-urlencoded
+
+StarDate= &StartTime= %EndDate= &EndTime=
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 400");
+});
+
+%}
+
+###
+POST http://localhost:8080/api/rental/reservations
+userId: {{userId}}
+locationId: {{locationId}}
+modelNames: cheapScooter,cheapScooter
+promotion: HappyMonth
+Content-Type: application/x-www-form-urlencoded
+
+startDate=2020-05-11&startTime=16:00:00&endDate=2020-05-11&endTime=19:00:00
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201");
+  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
+  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
+  client.global.set("reservationId", response.body["id"]);
+});
+%}
+
+####  Management with reservations - no used
+#POST http://localhost:8080/api/manage/reservations
+#userId: 1
+#locationId: 15
+#modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
+#promotion: Women's_day
+#Content-Type: application/x-www-form-urlencoded
+#
+#startDate=2020-05-10&startTime=14:00:00&endDate=2020-05-10&endTime=16:00:00
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 400, "Response status is not 400");
+#});
+#%}
+#
+####
+#POST http://localhost:8080/api/manage/reservations
+#userId: 1
+#locationId: 1
+#modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
+#promotion: FakePromotion
+#Content-Type: application/x-www-form-urlencoded
+#
+#startDate=2020-05-10&startTime=14:00:00&endDate=2020-05-10&endTime=16:00:00
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 400, "Response status is not 400");
+#});
+#%}
+#
+####
+#POST http://localhost:8080/api/manage/reservations
+#userId: 1
+#locationId: 1
+#modelNames: SCOOTER,EBIKE,SCOOTER,EBIKE
+#promotion: HappyMonth
+#Content-Type: application/x-www-form-urlencoded
+#
+#startDate=2020-05-10&startTime=14:00:00&endTime=16:00:00
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 400, "Response status is not 400");
+#});
+#%}
+#
+#### Error
+#POST http://localhost:8080/api/manage/reservations
+#userId: 1
+#locationId: 1
+#modelNames: cheapScooter
+#promotion: HappyMonth
+#Content-Type: application/x-www-form-urlencoded
+#
+#startDate=2020-05-11&startTime=17:00:00&endDate=2020-05-11&endTime=17:30:00
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 201, "Response status is not 201");
+#  client.assert(response.headers.valueOf("Location")!= null, "Invalid Location");
+#  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
+#  client.global.set("newReservationUrl", response.headers.valueOf("Location"));
+#  client.global.set("reservationId", response.body["id"]);
+#});
+#%}
+#
+####
+#GET {{newReservationUrl}}
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#  client.assert(response.status === 200, "Response status is not 200");
+#});
+#
+#%}
+#
+###
+PATCH http://localhost:8080/api/manage/reservations/{{reservationId}}
+userId: {{userId}}
+locationId: {{locationId}}
+modelNames: cheapScooter,cheapScooter
+promotion: Fathers day
+Content-Type: application/x-www-form-urlencoded
+
+startDate=2020-05-12&startTime=14:00:00&endDate=2020-05-12&endTime=18:00:00
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("id"), 'Can not find the reservationId');
+});
+%}
+
+###
+GET {{newReservationUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
+DELETE {{newReservationUrl}}
+
+> {%
+ client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+
 ### Has vehicles assigned
-DELETE {{newModelUrl}}
+DELETE http://localhost:8080/api/manage/models/cheapScooter
 
 > {%
 client.test("Request executed successfully", function() {
@@ -696,10 +774,33 @@ client.test("Request executed successfully", function() {
 %}
 
 ###
+PATCH http://localhost:8080/api/manage/promotions/{{promotionId}}
+Content-Type: application/x-www-form-urlencoded
+
+description=notEmpty&validFrom=2021-03-03&discount=0.3&validTo=2021-03-09
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.hasOwnProperty("name"), 'Can not find the promotionId');
+});
+%}
+
+### Only allowed after every reservation is finished and payed
 DELETE {{newPromotionUrl}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 400, "Response status is not 4c00");
+});
+%}
+
+###
+DELETE http://localhost:8080/api/manage/users/{{userId}}
 
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
 });
+
 %}

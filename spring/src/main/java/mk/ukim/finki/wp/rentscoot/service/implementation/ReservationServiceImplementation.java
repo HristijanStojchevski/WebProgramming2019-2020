@@ -95,6 +95,7 @@ public class ReservationServiceImplementation implements ReservationService {
         reservation.setDateEnd(endDate);
         reservation.setTimeStart(startTime);
         reservation.setTimeEnd(endTime);
+        if(modelName.length == 0) throw new InvalidReservationException("There are no vehicles chosen for this reservation");
         List<Vehicle> vehicles = location.getVehicles().stream().filter(isAvailable(startDate,startTime,endDate,endTime)).collect(Collectors.toList());
         List<Vehicle> vehiclesForReservation = new ArrayList<>();
         if(vehicles.size()>0) {

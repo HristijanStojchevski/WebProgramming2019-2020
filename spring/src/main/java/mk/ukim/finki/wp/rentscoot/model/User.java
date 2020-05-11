@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class User {
     @Id
@@ -44,4 +44,11 @@ public class User {
     private AuthProvider provider;
 
     private String providerID;*/
+
+    public User(String name,String email,String password,Role role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 }

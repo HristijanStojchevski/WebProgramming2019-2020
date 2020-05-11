@@ -1,6 +1,7 @@
 package mk.ukim.finki.wp.rentscoot.web.rest;
 
 import mk.ukim.finki.wp.rentscoot.model.*;
+import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidUserException;
 import mk.ukim.finki.wp.rentscoot.service.*;
 import org.springframework.data.geo.Point;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -197,7 +198,7 @@ public class ManagementApi {
 // RESERVATIONS ENDPOINT
     @PostMapping("/reservations")
     @ResponseStatus(HttpStatus.CREATED)
-    public Reservation addReservation(@RequestHeader(name="userEmail") String email,
+    public Reservation addReservation(@RequestHeader(name="userId") Long userId,
                                       @RequestHeader(name="locationId") int locationId,
                                       @RequestHeader(name="modelNames") String modelNames,
                                       @RequestHeader(name = "promotion") String promotion,
@@ -209,11 +210,10 @@ public class ManagementApi {
                                       UriComponentsBuilder builder){
         //list of models ex: bike,bike,scoot,scoot,scoot
         String[] modelName = modelNames.split(",");
-        User user = this.userService.getUserByEmail(email);
         try {
-            Reservation result = this.reservationService.createReservation(locationId, modelName, user.getId(), promotion, startDate, startTime, endDate, endTime);
-            response.setHeader("Location", builder.path("/api/rental/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
-            return result;
+                Reservation result = this.reservationService.createReservation(locationId, modelName, userId, promotion, startDate, startTime, endDate, endTime);
+                response.setHeader("Location", builder.path("/api/rental/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
+                return result;
         }
         catch (Exception e){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -225,15 +225,14 @@ public class ManagementApi {
                                          @RequestHeader(name="locationId") int locationId,
                                          @RequestHeader(name="modelNames") String modelNames,
                                          @RequestHeader(name = "promotion") String promotion,
-                                         @RequestHeader(name="userEmail") String email,
+                                         @RequestHeader(name="userId") Long userId,
                                          @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                          @RequestParam("startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
                                          @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                          @RequestParam("endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime){
         //list of models ex: bike,bike,scoot,scoot,scoot
         String[] modelName = modelNames.split(",");
-        User user = this.userService.getUserByEmail(email);
-        return this.reservationService.updateReservation(reservationId,locationId,modelName,user.getId(),promotion,startDate,startTime,endDate,endTime);
+        return this.reservationService.updateReservation(reservationId,locationId,modelName,userId,promotion,startDate,startTime,endDate,endTime);
     }
     @GetMapping("/reservations")
     public List<Reservation> getAllReservations(){
@@ -284,11 +283,11 @@ public class ManagementApi {
         }
         return this.userService.getAllUsers();
     }
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/id/{userId}")
     public User getUserById(@PathVariable Long userId){
         return this.userService.getUserById(userId);
     }
-    @GetMapping("/users/{userEmail}")
+    @GetMapping("/users/email/{userEmail}")
     public User getUserByEmail(@PathVariable String userEmail){
         return this.userService.getUserByEmail(userEmail);
     }

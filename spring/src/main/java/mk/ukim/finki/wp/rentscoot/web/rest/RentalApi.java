@@ -58,7 +58,7 @@ public class RentalApi {
 
     @PostMapping("/reservations") //If there is time do this with User ID
     @ResponseStatus(HttpStatus.CREATED)
-    public Reservation addReservation(@RequestHeader(name="userEmail") String email,
+    public Reservation addReservation(@RequestHeader(name="userId") Long userId,
                                       @RequestHeader(name="locationId") int locationId,
                                       @RequestHeader(name="modelNames") String modelNames,
                                       @RequestHeader(name = "promotion") String promotion,
@@ -70,16 +70,13 @@ public class RentalApi {
                                       UriComponentsBuilder builder){
         //list of models ex: bike,bike,scoot,scoot,scoot
         String[] modelName = modelNames.split(",");
-        User user = this.userService.getUserByEmail(email);
         try {
-            if (user != null) {
-                Reservation result = this.reservationService.createReservation(locationId, modelName, user.getId(), promotion, startDate, startTime, endDate, endTime);
-                response.setHeader("Location", builder.path("/api/rental/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
+                Reservation result = this.reservationService.createReservation(locationId, modelName, userId, promotion, startDate, startTime, endDate, endTime);
+                response.setHeader("Location", builder.path("/api/manage/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
                 return result;
-            } else throw new InvalidUserException();
+
         }
         catch (Exception e){
-            response.setStatus(HttpStatus.BAD_GATEWAY.value());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
         }
     }

@@ -6,11 +6,12 @@ import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class Location {
     @Id
@@ -42,16 +43,19 @@ public class Location {
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "location")
     private List<Reservation> reservations;
 
-//    public void addVehicle(Vehicle vehicle){
-//        this.vehicles.add(vehicle);
-//    }
-//    public void removeVehicle(Vehicle vehicle){
-//        this.vehicles.remove(vehicle);
-//    }
-//    public void addReservation(Reservation reservation){
-//        this.reservations.add(reservation);
-//    }
-//    public void removeReservation(Reservation reservation){
-//        this.reservations.remove(reservation);
-//    }
+    public Location(String name,String city,String country,String address,String description,Point coordinates,Point popupCoordinates) {
+        this.name = name;
+        this.city = city;
+        this.country = country;
+        this.address = address;
+        this.description = description;
+        this.coordinates = coordinates;
+        this.popupCoordinates = popupCoordinates;
+        this.vehicles = new ArrayList<>();
+        this.reservations = new ArrayList<>();
+    }
+    public void addVehicles(Vehicle vehicle){
+        this.getVehicles().add(vehicle);
+        //vehicle.setLocation(this);
+    }
 }
