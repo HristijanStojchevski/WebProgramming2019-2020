@@ -2,6 +2,8 @@ package mk.ukim.finki.wp.rentscoot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
@@ -38,6 +40,7 @@ public class Location {
     private Point popupCoordinates;
     //private GeoPosition position;
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "location")
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Vehicle> vehicles;
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "location")

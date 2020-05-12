@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -26,6 +28,7 @@ public class VehicleModel {
     private double pricePerMinute;
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "model")
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Vehicle> vehicles;
 
     private int amountAvailable=0;

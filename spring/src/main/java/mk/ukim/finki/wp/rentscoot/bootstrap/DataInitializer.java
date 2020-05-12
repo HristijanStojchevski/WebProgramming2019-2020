@@ -40,6 +40,7 @@ public class DataInitializer {
 
     @PostConstruct
     public void initialize(){
+
         locations.add(new Location("Железничка","Македонија","Скопје", "","Кај таксистите",new Point(41.991340,21.445175),new Point(41.991000,21.445475)));
         locations.add(new Location("City Mall","Македонија","Скопје", "","Пред Play Cafe",new Point(42.004129,21.392004),new Point(42.003829,21.392404)));
         locations.add(new Location("Градски плоштад","Македонија","Скопје", "","Кај Аце",new Point(41.996005,21.430838),new Point(41.995905,21.431138)));
@@ -224,9 +225,9 @@ public class DataInitializer {
         locations.get(3).getVehicles().add(vehicles.get(52));
 
         if(this.locationRepository.count() == 0){
-            this.locationRepository.saveAll(locations);
             this.userRepository.saveAll(users);
             this.modelRepository.saveAll(models);
+            this.locationRepository.saveAll(locations);
             this.vehicleRepository.saveAll(vehicles);
         }
     }
