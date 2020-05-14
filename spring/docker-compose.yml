@@ -1,7 +1,7 @@
-version: "3.1"
+version: "3.4"
 services:
   #  Create a service named db.
-  rent-db:
+  rent-spring-db:
     #   Use the Docker Image postgres. This will pull the newest release.
     image: "postgres"
     #   Give the container the name my_postgres. You can changes to something else.
@@ -11,10 +11,9 @@ services:
       - POSTGRES_USER=rent
       - POSTGRES_PASSWORD=Rental123!
       - POSTGRES_DB=rental
-    #   Maps port 54320 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
+    #   Maps port 54320 (localhost) to port 5432 on the container ONLY ON LINUX. So probably ok when dockerizing all services. You can change the ports to fix your needs for development.
     ports:
       - "54320:5432"
     #   Set a volume some that database is not lost after shutting down the container.
-    #   I used the name postgres-data but you can changed it to something else.
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - ./rental-postgres-data:/var/lib/postgresql/data

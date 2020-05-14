@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 //import './Navbar.css';
 function Navbar ({navValue}) {
     const [init,setInit] = React.useState(true);
+    const [loggedIn,setLoggedIn] = React.useState(false);
     const [value, setValue] = React.useState(0);
 const changeTabs= (event, newValue) => {
     setValue(newValue);
@@ -50,6 +51,7 @@ React.useEffect(() => { setUpdate(); },[navValue]);
         </Grid>
         <Grid item sm={2}>
         </Grid>
+        {loggedIn?<span>logout</span>:<span>login/signup</span>}
     </Grid>
     </Paper>
   );
