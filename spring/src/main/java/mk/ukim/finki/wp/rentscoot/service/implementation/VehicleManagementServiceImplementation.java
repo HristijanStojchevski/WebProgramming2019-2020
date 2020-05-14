@@ -44,7 +44,10 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
         vehicle.setModel(vehicleModel);
         Location location = this.locationRepository.findLocationById(locationId).orElseThrow(InvalidLocationException::new);
         vehicle.setLocation(location);
-        return this.vehicleRepository.addVehicle(vehicle);
+        vehicle = this.vehicleRepository.addVehicle(vehicle);
+        vehicleModel.setAmountAvailable(vehicleModel.getAmountAvailable()+1);
+        this.modelRepository.addModel(vehicleModel);
+        return vehicle;
     }
 
     @Override
@@ -71,12 +74,20 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
     public Vehicle updateVehicle(String serialNo, String description, LocalDate dateBought, String modelName, Integer locationId, boolean onTheRoad) {
         Vehicle vehicle = this.vehicleRepository.findVehicleById(serialNo).orElseThrow(InvalidVehicleException::new);
         vehicle.setDescription(description);
-        VehicleModel vehicleModel = this.modelRepository.findModelById(modelName).orElseThrow(InvalidVehicleException::new);
+        VehicleModel vehicleModel = this.modelRepository.findModelById(modelName).orElseThrow(InvalidVehicleModelException::new);
+        VehicleModel oldModel = this.modelRepository.findModelById(vehicle.getModel().getModelName()).orElseThrow(InvalidVehicleModelException::new);
+        if(vehicle.getModel().getModelName().compareTo(modelName)!=0){
+            vehicleModel.setAmountAvailable(vehicleModel.getAmountAvailable()+1);
+            oldModel.setAmountAvailable(oldModel.getAmountAvailable()-1);
+        }
         vehicle.setModel(vehicleModel);
         Location location = this.locationRepository.findLocationById(locationId).orElseThrow(InvalidLocationException::new);
         vehicle.setLocation(location);
         vehicle.setOnTheRoad(onTheRoad);
-        return this.vehicleRepository.addVehicle(vehicle);
+        vehicle = this.vehicleRepository.addVehicle(vehicle);
+        this.modelRepository.addModel(vehicleModel);
+        this.modelRepository.addModel(oldModel);
+        return vehicle;
     }
 
     @Override
@@ -110,6 +121,9 @@ public class VehicleManagementServiceImplementation implements VehicleManagement
     public void deleteVehicle(String serialNo) {
         Vehicle vehicle = this.vehicleRepository.findVehicleById(serialNo).orElseThrow(InvalidVehicleException::new);
         this.vehicleRepository.deleteVehicle(vehicle);
+        VehicleModel model = vehicle.getModel();
+        model.setAmountAvailable(model.getAmountAvailable()-1);
+        this.modelRepository.addModel(model);
     }
 
     @Override

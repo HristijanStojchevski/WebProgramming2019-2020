@@ -32,7 +32,6 @@ public class Vehicle {
     private Location location;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
-    //@NotFound(action = NotFoundAction.IGNORE)
     private List<Reservation> reservations;
     @NotNull
     private boolean onTheRoad=false;
