@@ -6,7 +6,7 @@ import ProductValues from '../modules/views/ProductValues';
 import ProductCTA from '../modules/views/ProductCTA';
 import ProductHowItWorks from '../modules/views/ProductHowItWorks';
 
-function Home({handleNavHome}){
+function Home({handleNavHome,models}){
   //const [selectedNav, setSelectedNav] = useState(null);
   const handleNav = (selected) => {
     //setSelectedNav(selected);

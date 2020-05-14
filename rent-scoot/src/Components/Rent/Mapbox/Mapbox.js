@@ -1,11 +1,14 @@
 import React,{useState} from 'react';
 import ReactMap,{Marker,Popup} from 'react-map-gl';
-import * as PointData from '../../Data/vehicle-locations.json';
+import * as PointData from '../../../Data/vehicle-locations.json';
 import {Button} from '@material-ui/core';
-import LocImg from '../../Assets/images/scooter-svgrepo-com (1).svg';
-import './Mapbox.css'
-   
+import LocImg from '../../../Assets/images/scooter-svgrepo-com (1).svg';
+import './Mapbox.css';
+import locationsService from '../../../repository/axiosLocationsRepository';   
+
 export default function Map({handleSelect}){
+    const[locations,setLocations] = useState(locationsService.fetchLocations); //can't map this json in a functional component.
+
     const[viewport, setViewport] = useState({
         latitude: 41.994010,
         longitude: 21.435920,
@@ -45,9 +48,8 @@ export default function Map({handleSelect}){
                      </Button>
                  </Marker>
              ))}
-
-             {selectedPlace ? (
-                <Popup latitude={selectedPlace.properties.PopupCoordinates[0]} 
+            {console.log(locations)}
+             {selectedPlace ? ( <Popup latitude={selectedPlace.properties.PopupCoordinates[0]} 
                        longitude={selectedPlace.properties.PopupCoordinates[1]}
                        onClose= {()=>{
                            setSelectedPlace(null);

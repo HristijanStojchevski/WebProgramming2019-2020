@@ -2,7 +2,7 @@ import React, { Fragment,useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import './Rent.css';
-import BoxMap from './Mapbox';
+import BoxMap from '../Mapbox/Mapbox';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -10,8 +10,8 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import FormFields from './Form';
-import * as PointData from '../../Data/vehicle-locations.json';
+import FormFields from '../Form/Form';
+import * as PointData from '../../../Data/vehicle-locations.json';
 
 
 function Rent() {
