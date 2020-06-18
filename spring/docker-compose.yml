@@ -17,3 +17,19 @@ services:
     #   Set a volume some that database is not lost after shutting down the container.
     volumes:
       - ./rental-postgres-data:/var/lib/postgresql/data
+  #   Service for the spring-boot-app
+  spring-app:
+    image: springboot-rent-app:latest
+    container_name: "rent_spring"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rent-spring-db
+    links:
+      - rent-spring-db
+    restart: always

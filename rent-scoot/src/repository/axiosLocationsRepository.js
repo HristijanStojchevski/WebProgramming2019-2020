@@ -1,12 +1,12 @@
-import axios from '../custom-axios/axios'
+import axiosCustom from '../custom-axios/axios'
 //import qs from 'qs'
 
 const LocationsService = {
     fetchLocations : () => {
-        return axios.get("/api/rental/locations");
+        return axiosCustom.get("/api/rental/locations");
     },
     searchLocation : (term) => {
-        return axios.get(`/api/rental/locations?term=${term}`)
+        return axiosCustom.get(`/api/rental/locations?term=${term}`)
     }
 }
 

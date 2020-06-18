@@ -1,14 +1,11 @@
 import React,{useState} from 'react';
 import ReactMap,{Marker,Popup} from 'react-map-gl';
-import * as PointData from '../../../Data/vehicle-locations.json';
+// import * as PointData from '../../../Data/vehicle-locations.json';
 import {Button} from '@material-ui/core';
 import LocImg from '../../../Assets/images/scooter-svgrepo-com (1).svg';
 import './Mapbox.css';
-import locationsService from '../../../repository/axiosLocationsRepository';   
 
-export default function Map({handleSelect}){
-    const[locations,setLocations] = useState(locationsService.fetchLocations); //can't map this json in a functional component.
-
+export default function Map({handleSelect,locations}){
     const[viewport, setViewport] = useState({
         latitude: 41.994010,
         longitude: 21.435920,
@@ -35,9 +32,9 @@ export default function Map({handleSelect}){
                 За повеќе детали, притиснете на локациите, каде ве чека голем избор на тротинети.
             </p>
          </div>
-             {PointData.features.map((point)=>(
-                 <Marker key={point.properties.Loc_ID}
-                    latitude={point.properties.Coordinates[0]}  longitude={point.properties.Coordinates[1]}>
+             {locations.map((point)=>(
+                 <Marker key={point.id}
+                    latitude={point.coordinates.x}  longitude={point.coordinates.y}>
                      <Button size="small" style={styles} 
                         onClick = {e => {
                          e.preventDefault();
@@ -48,16 +45,16 @@ export default function Map({handleSelect}){
                      </Button>
                  </Marker>
              ))}
-            {console.log(locations)}
-             {selectedPlace ? ( <Popup latitude={selectedPlace.properties.PopupCoordinates[0]} 
-                       longitude={selectedPlace.properties.PopupCoordinates[1]}
+             {selectedPlace ? ( <Popup latitude={selectedPlace.popupCoordinates.x} 
+                       longitude={selectedPlace.popupCoordinates.y}
                        onClose= {()=>{
                            setSelectedPlace(null);
                        }}
                        >
                     <div>
-                        <h2>{selectedPlace.properties.Name}</h2>
-                        <p>{selectedPlace.properties.Description}</p>
+                        <h2>{selectedPlace.name}</h2>
+                        <p>{selectedPlace.description}</p>
+                        {/* <p>{selectedPlace.vehicles.count} available vehicles.</p> */}
                     </div>
                 </Popup>
              ) : null}

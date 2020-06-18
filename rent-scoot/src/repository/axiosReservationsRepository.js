@@ -10,12 +10,21 @@ const reservationsService = {
     },
     createReservation : (reservation) => {
         const data = {
-            ...reservation //should be with the attributes of the same name as the endpoint form params
+            startDate: reservation.startDate,
+            startTime: reservation.startTime,
+            endDate: reservation.endDate,
+            endTime: reservation.endTime
         }
         const formParams = qs.stringify(data);
-        return axios.post("/api/rental/reservations",formParams, {
+        const uId = reservation.userEmail === "user@email.com" ? 1 : 4; // Just for testing..... Will get userId from state LoggedInUser (Session)
+        
+        return axios.post(`/api/rental/reservations`,formParams, {
             headers: {
-                'Content-Type' : 'application/x-www-form-urlencoded'
+                'Content-Type' : 'application/x-www-form-urlencoded',
+                'userId': uId,
+                'locationId': reservation.locationId,
+                'modelNames': reservation.modelNames,
+                'promotion': reservation.promotion
             }
         })
     }

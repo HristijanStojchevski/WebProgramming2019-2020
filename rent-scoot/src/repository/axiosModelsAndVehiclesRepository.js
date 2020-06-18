@@ -8,8 +8,15 @@ const modelAndVehicleService = {
     fetchModelById : (modelId) => {
         return axios.get(`/api/rental/models/${modelId}`)
     },
-    fetchAvailableVehicles : (dateStart,dateEnd,timeStart,timeEnd) => {
-        return axios.get(`/api/rental/vehicles?dateStart=${dateStart}&dateEnd=${dateEnd}&timeStart${timeStart}&timeEnd=${timeEnd}`)
+    fetchAvailableVehicles : (locationId,dateStart,dateEnd,timeStart,timeEnd) => {
+        const data = {
+            startDate: dateStart,
+            startTime: timeStart,
+            endDate: dateEnd,
+            endTime: timeEnd
+        }
+        const params = qs.stringify(data);
+        return axios.get(`/api/rental/vehicles/${locationId}?${params}`)
     }
 }
 
