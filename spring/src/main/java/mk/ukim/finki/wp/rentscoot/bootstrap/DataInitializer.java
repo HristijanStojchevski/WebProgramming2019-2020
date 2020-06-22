@@ -55,6 +55,7 @@ public class DataInitializer {
         promotions.add(new Promotion("May - take the scooters out","Finally some good weather to cruise around",0.15,new ArrayList<>(),LocalDate.of(2020,5,1),LocalDate.of(2020,5,31)));
         promotions.add(new Promotion("Corona Free Weekend","As the situation is coming to a rest, this weekend is for you to open up you lungs around the city",0.25,new ArrayList<>(),LocalDate.of(2020,5,29),LocalDate.of(2020,5,31)));
         promotions.add(new Promotion("Regular - 5","For the loyal clients out there that use our services at least 5 times a month",0.2,new ArrayList<>(),LocalDate.of(2020,5,15),LocalDate.of(2022,1,1)));
+        promotions.add(new Promotion("Regular","For the loyal clients out there that use our services at least 5 times a month",0,new ArrayList<>(),LocalDate.of(2020,5,1),LocalDate.of(2022,1,1)));
 
         models.add(new VehicleModel("XIAOMI M365",VehicleType.SCOOTER,"Одличен за да ве одведе до посакуваната локација на време и со стил",2,new ArrayList<>(),16));
         models.add(new VehicleModel("Power Core E100",VehicleType.SCOOTER,"Одличен за да ве одведе до посакуваната локација не грижејќи се за густиот сообраќај",1,new ArrayList<>(),20));
@@ -229,6 +230,7 @@ public class DataInitializer {
             this.modelRepository.saveAll(models);
             this.locationRepository.saveAll(locations);
             this.vehicleRepository.saveAll(vehicles);
+            this.promotionRepository.saveAll(promotions);
         }
     }
 }

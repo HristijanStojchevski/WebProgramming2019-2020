@@ -18,7 +18,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://${client.url}:3000")
 @RequestMapping(path = "api/rental", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 public class RentalApi {
     private final LocationsService locationsService;
