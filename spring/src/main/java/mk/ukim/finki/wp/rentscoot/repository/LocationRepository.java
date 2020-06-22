@@ -17,4 +17,6 @@ public interface LocationRepository {
     List<Location> findLocationsByCityOrCountry(String city,String country);
 
     List<Location> searchLocations(String term);
+
+    boolean exists(Integer id);
 }

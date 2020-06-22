@@ -1,12 +1,14 @@
 package mk.ukim.finki.wp.rentscoot.service.implementation;
 
 import mk.ukim.finki.wp.rentscoot.model.Location;
+import mk.ukim.finki.wp.rentscoot.model.Vehicle;
 import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidLocationException;
 import mk.ukim.finki.wp.rentscoot.repository.LocationRepository;
 import mk.ukim.finki.wp.rentscoot.service.LocationsService;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +29,11 @@ public class LocationsServiceImplementation implements LocationsService {
         location.setAddress(address);
         location.setMunicipality(municipality);
         location.setCoordinates(coordinates);
+        if(popupCoordinates==null){
+            popupCoordinates = new Point(coordinates.getX()-0.000300,coordinates.getY()+0.000350);
+        }
         location.setPopupCoordinates(popupCoordinates);
+        //location.setVehicles(new ArrayList<>());
         return this.locationRepository.createLocation(location);
     }
 
@@ -41,12 +47,17 @@ public class LocationsServiceImplementation implements LocationsService {
         oldLocation.setAddress(address);
         oldLocation.setDescription(description);
         oldLocation.setCoordinates(coordinates);
+        if(popupCoordinates==null){
+            popupCoordinates = new Point(coordinates.getX()-0.000300,coordinates.getY()+0.000350);
+        }
         oldLocation.setPopupCoordinates(popupCoordinates);
         return this.locationRepository.createLocation(oldLocation);
     }
 
     @Override
     public List<Location> getAllLocations() {
+//        List<Location> all = this.locationRepository.getAllLocations();
+//        all.stream().forEach(location -> {if(location.getVehicles().size()==0)location.setVehicles(null);});
         return this.locationRepository.getAllLocations();
     }
 
@@ -58,16 +69,22 @@ public class LocationsServiceImplementation implements LocationsService {
 
     @Override
     public Location getLocation(Integer id) {
+//        Location location = this.locationRepository.findLocationById(id).orElseThrow(InvalidLocationException::new);
+//        if(location.getVehicles()==null)location.setVehicles(new ArrayList<>());
         return this.locationRepository.findLocationById(id).orElseThrow(InvalidLocationException::new);
     }
 
     @Override
     public List<Location> findLocationsByCityOrCountry(String place,String country) {
+//        List<Location> locations = this.locationRepository.findLocationsByCityOrCountry(place, country);
+//        locations.forEach(location -> {if(location.getVehicles()==null)location.setVehicles(new ArrayList<>());});
         return this.locationRepository.findLocationsByCityOrCountry(place, country);
     }
 
     @Override
     public List<Location> searchLocations(String term) {
+//        List<Location> locations = this.locationRepository.searchLocations(term);
+//        locations.stream().forEach(location -> {if(location.getVehicles().size()==0)location.setVehicles(null);});
         return this.locationRepository.searchLocations(term);
     }
 }

@@ -95,29 +95,35 @@ public class ReservationServiceImplementation implements ReservationService {
         reservation.setDateEnd(endDate);
         reservation.setTimeStart(startTime);
         reservation.setTimeEnd(endTime);
+        if(modelName.length == 0) throw new InvalidReservationException("There are no vehicles chosen for this reservation");
         List<Vehicle> vehicles = location.getVehicles().stream().filter(isAvailable(startDate,startTime,endDate,endTime)).collect(Collectors.toList());
         List<Vehicle> vehiclesForReservation = new ArrayList<>();
-        Arrays.stream(modelName).forEach( model -> {
-            // najdi takov model na vozilo na datumot
-            Vehicle vehicle = vehicles.stream().filter(vehicle1 -> model.equals(vehicle1.getModel().getModelName())).findFirst().orElseThrow(InvalidVehicleException::new);
-            // stavi go vo lista na vozila
-            vehiclesForReservation.add(vehicle);
-        });
-        double totalPrice;
-        double totalPricePerMin = vehicles.stream().mapToDouble(vehicle -> vehicle.getModel().getPricePerMinute()).sum();
-        LocalDateTime start = LocalDateTime.of(startDate,startTime);
-        LocalDateTime end = LocalDateTime.of(endDate,endTime);
-        long minutesOfReservation = ChronoUnit.MINUTES.between(start,end);
-        totalPrice = totalPricePerMin * (double)minutesOfReservation;
-        reservation.setVehicles(vehicles);
-        Promotion promotion = this.promotionRepository.findById(promotionName).orElseThrow(InvalidPromotionException::new);
-        reservation.setPromotion(promotion);
-        //discount from promotion
-        totalPrice = totalPrice - promotion.getDiscount()*totalPrice;
-        User user = this.userRepository.getUserById(userId).orElseThrow(InvalidUserException::new);
-        reservation.setClient(user);
-        reservation.setTotalPrice(totalPrice);
-        return reservation;
+        if(vehicles.size()>0) {
+            Arrays.stream(modelName).forEach(model -> {
+                // najdi takov model na vozilo na datumot
+                Vehicle vehicle = vehicles.stream().filter(vehicle1 -> model.equals(vehicle1.getModel().getModelName())).findFirst().orElseThrow(InvalidVehicleException::new);
+                // stavi go vo lista na vozila
+                vehiclesForReservation.add(vehicle);
+            });
+            double totalPrice;
+            reservation.setVehicles(vehiclesForReservation);
+            double totalPricePerMin = vehiclesForReservation.stream().mapToDouble(vehicle -> vehicle.getModel().getPricePerMinute()).sum();
+            LocalDateTime start = LocalDateTime.of(startDate,startTime);
+            LocalDateTime end = LocalDateTime.of(endDate,endTime);
+            long minutesOfReservation = ChronoUnit.MINUTES.between(start,end);
+            totalPrice = totalPricePerMin * (double)minutesOfReservation;
+            if(this.promotionRepository.exists(promotionName)) {
+                Promotion promotion = this.promotionRepository.findById(promotionName).orElseThrow(InvalidPromotionException::new);
+                reservation.setPromotion(promotion);
+                //discount from promotion
+                totalPrice = totalPrice - promotion.getDiscount() * totalPrice; // could easily be totalPrice*(1-DISCOUNT)
+            }
+            User user = this.userRepository.getUserById(userId).orElseThrow(InvalidUserException::new);
+            reservation.setClient(user);
+            reservation.setTotalPrice(totalPrice);
+            return reservation;
+        }
+        else throw new InvalidReservationException("No vehicles are chosen for this reservation.Development state only");
     }
     private Predicate<Vehicle> isAvailable(LocalDate startDate,LocalTime startTime,LocalDate endDate,LocalTime endTime) {
         return  v -> v.getReservations().stream()

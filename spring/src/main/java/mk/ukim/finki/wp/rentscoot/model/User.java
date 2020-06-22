@@ -11,15 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
+@Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
     private List<Reservation> reservation;
 
     @NotNull
@@ -29,7 +30,7 @@ public class User {
     @NotNull
     private String email;
 
-    /*@NonNull
+    /*@NotNull
     private Boolean emailVerified = false;*/
 
     @JsonIgnore
@@ -44,4 +45,11 @@ public class User {
     private AuthProvider provider;
 
     private String providerID;*/
+
+    public User(String name,String email,String password,Role role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 }

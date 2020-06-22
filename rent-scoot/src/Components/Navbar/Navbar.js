@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 //import './Navbar.css';
 function Navbar ({navValue}) {
     const [init,setInit] = React.useState(true);
+    const [loggedIn,setLoggedIn] = React.useState(false);
     const [value, setValue] = React.useState(0);
 const changeTabs= (event, newValue) => {
     setValue(newValue);
@@ -30,25 +31,26 @@ React.useEffect(() => { setUpdate(); },[navValue]);
   
     return (
     <Paper style={{backgroundColor: '#3a4aa3'}}>
-    <Grid container>
-        <Grid item sm={2}>
+    <Grid container justify="space-between">
+        <Grid item xs={12} md={2} >
             <img className="nav-logo" src={Logo} alt=" "/>
         </Grid>
-        <Grid item sm={8}>
+        <Grid item xs={12} md={8} className="tab-align">
             <Tabs 
                 value={value}
                 onChange = { changeTabs }
                 indicatorColor="warning"
                 textColor="primary" 
-                centered
+                variant="fullWidth"
                 >
-
+            
             <Tab label="Почетна" component={Link} to="/"/>
             <Tab label="Изнајми" component={Link} to="/Rent"/>
             <Tab label="За нас" component={Link} to="/About"/>
             </Tabs>
         </Grid>
-        <Grid item sm={2}>
+        <Grid item xs={12} md={2}>
+            {loggedIn?<span>logout</span>:<span>login/signup</span>}
         </Grid>
     </Grid>
     </Paper>

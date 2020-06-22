@@ -44,7 +44,7 @@ public class PromotionServiceImplementation implements PromotionService {
 
     @Override
     public Promotion updatePromotion(String name, String description, double discount, LocalDate validFrom, LocalDate validTo) {
-        Promotion promotion = this.promotionRepository.findById(name).orElseThrow(InvalidPromotionException::new);
+        Promotion promotion = this.promotionRepository.findById(name).orElseThrow(()-> new InvalidPromotionException("Updating error"));
         promotion.setDescription(description);
         promotion.setDiscount(discount);
         promotion.setValidFrom(validFrom);
@@ -54,7 +54,7 @@ public class PromotionServiceImplementation implements PromotionService {
 
     @Override
     public void deletePromotion(String name) {
-        Promotion promotion = this.promotionRepository.findById(name).orElseThrow(InvalidPromotionException::new);
+        Promotion promotion = this.promotionRepository.findById(name).orElseThrow(()-> new InvalidPromotionException("Deletion error"));
         this.promotionRepository.deletePromotion(promotion);
     }
 
@@ -67,8 +67,11 @@ public class PromotionServiceImplementation implements PromotionService {
     public Promotion findNewestPromotion() {
         List<Promotion> allValid = this.promotionRepository.findAllValidPromotions(LocalDate.now());
         // Natural order supposed to be oldest -> newest.So with reversing we get newest -> oldest. Also there is smarter solution with max
-        return allValid.stream().max(Comparator.comparing(Promotion::getValidFrom)).orElseThrow(InvalidPromotionException::new);
-        //return allValid.stream().sorted(Comparator.comparing(Promotion::getValidFrom,Comparator.nullsLast(Comparator.naturalOrder())).reversed()).findFirst().orElseThrow(InvalidPromotionException::new);
+        if(allValid.size()>0) {
+            return allValid.stream().max(Comparator.comparing(Promotion::getValidFrom)).orElseThrow(()->new InvalidPromotionException("Comparator error")); //change to exception
+            //return allValid.stream().sorted(Comparator.comparing(Promotion::getValidFrom,Comparator.nullsLast(Comparator.naturalOrder())).reversed()).findFirst().orElseThrow(InvalidPromotionException::new);
+        }
+        else return null;//throw new InvalidPromotionException("No valid promotions found");
     }
 
     @Override

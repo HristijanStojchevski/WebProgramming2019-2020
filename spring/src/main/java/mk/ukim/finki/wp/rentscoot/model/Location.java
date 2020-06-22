@@ -1,20 +1,25 @@
 package mk.ukim.finki.wp.rentscoot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NonNull
+    @NotNull
     private String name;
 
     private String country;
@@ -29,27 +34,31 @@ public class Location {
 
 //    private Long latitude;
 //    private Long longitude;
-    @NonNull
+    @NotNull
     private Point coordinates;
-    @NonNull
+    @NotNull
     private Point popupCoordinates;
     //private GeoPosition position;
-    @OneToMany(mappedBy = "location")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "location")
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Vehicle> vehicles;
-
-    @OneToMany(mappedBy = "location")
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "location")
     private List<Reservation> reservations;
 
-//    public void addVehicle(Vehicle vehicle){
-//        this.vehicles.add(vehicle);
-//    }
-//    public void removeVehicle(Vehicle vehicle){
-//        this.vehicles.remove(vehicle);
-//    }
-//    public void addReservation(Reservation reservation){
-//        this.reservations.add(reservation);
-//    }
-//    public void removeReservation(Reservation reservation){
-//        this.reservations.remove(reservation);
-//    }
+    public Location(String name,String city,String country,String address,String description,Point coordinates,Point popupCoordinates) {
+        this.name = name;
+        this.city = city;
+        this.country = country;
+        this.address = address;
+        this.description = description;
+        this.coordinates = coordinates;
+        this.popupCoordinates = popupCoordinates;
+        this.vehicles = new ArrayList<>();
+        this.reservations = new ArrayList<>();
+    }
+    public void addVehicles(Vehicle vehicle){
+        this.getVehicles().add(vehicle);
+        //vehicle.setLocation(this);
+    }
 }

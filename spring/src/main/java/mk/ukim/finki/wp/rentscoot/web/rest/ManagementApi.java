@@ -1,12 +1,14 @@
 package mk.ukim.finki.wp.rentscoot.web.rest;
 
 import mk.ukim.finki.wp.rentscoot.model.*;
+import mk.ukim.finki.wp.rentscoot.model.exceptions.InvalidUserException;
 import mk.ukim.finki.wp.rentscoot.service.*;
 import org.springframework.data.geo.Point;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,11 +37,11 @@ public class ManagementApi {
     }
 // LOCATIONS ENDPOINT
     @GetMapping("/locations")
-    public List<Location> getAllLocations(@RequestHeader(name="city", defaultValue = "",required = false) String city,
-                                          @RequestHeader(name="country", defaultValue = "",required = false) String country,
+    public List<Location> getAllLocations(@RequestHeader(name="city",required = false) String city,
+                                          @RequestHeader(name="country",required = false) String country,
                                           @RequestParam(value = "term",required = false) String term){
-        if(!city.equals("") || !country.equals("")) return this.locationsService.findLocationsByCityOrCountry(city,country);
         if(term!=null) return this.locationsService.searchLocations(term);
+        if(city!=null || country!=null) return this.locationsService.findLocationsByCityOrCountry(city,country);
         return this.locationsService.getAllLocations();
     }
 
@@ -90,11 +92,12 @@ public class ManagementApi {
     public VehicleModel getModel(@PathVariable String modelName){
         return this.vehicleService.findModelById(modelName);
     }
-    @GetMapping("/vehicles")
+    @GetMapping("/vehicles") //might be pageable
     public List<Vehicle> getAllVehicles(){
         return this.vehicleService.getAllVehicles();
     }
     @PostMapping("/vehicles")
+    @ResponseStatus(HttpStatus.CREATED)
     public Vehicle addVehicle(@RequestParam(name = "serialNo") String serialNo,
                               @RequestParam(name = "description") String description,
                               @RequestParam(name = "dateBought", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateBought,
@@ -105,11 +108,13 @@ public class ManagementApi {
         if(dateBought==null){
             dateBought = LocalDate.now();
         }
+        //if(this.locationsService.exists())
         Vehicle result = this.vehicleService.addVehicle(serialNo,description,dateBought,modelName,locationId);
         response.setHeader("Location",builder.path("/api/manage/vehicles/{vehicleId}").buildAndExpand(result.getSerialNo()).toUriString());
         return result;
     }
     @PostMapping("/models")
+    @ResponseStatus(HttpStatus.CREATED)
     public VehicleModel addModel(@RequestParam(name = "name") String name,
                                  @RequestParam(name = "description") String description,
                                  @RequestParam(name = "pricePerMinute") double pricePerMinute,
@@ -123,15 +128,15 @@ public class ManagementApi {
     @PatchMapping("/vehicles/{serialNo}")
     public Vehicle updateVehicle(@PathVariable String serialNo,
                                  @RequestParam(name = "description",required = false) String description,
-                                 @RequestParam(name = "dateBought",required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate dateBought,
-                                 @RequestParam(name = "modelName", required = false) String modelName,
-                                 @RequestParam(name = "locationId",required = false) Integer locationId,
-                                 @RequestParam(name = "onTheRoad",required = false) boolean onTheRoad){
+                                 @RequestParam(name = "dateBought") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate dateBought,
+                                 @RequestParam(name = "modelName") String modelName,
+                                 @RequestParam(name = "locationId") Integer locationId,
+                                 @RequestParam(name = "onTheRoad") boolean onTheRoad){
         return this.vehicleService.updateVehicle(serialNo,description,dateBought,modelName,locationId,onTheRoad);
     }
     @PatchMapping("/models/{oldName}")
     public VehicleModel updateModel(@PathVariable String oldName,
-                                    @RequestParam(name = "name", required = false) String name,
+                                    @RequestParam(name = "name") String name,
                                     @RequestParam(name = "description",required = false) String  description,
                                     @RequestParam(name = "pricePerMinute") double pricePerMinute,
                                     @RequestParam(name = "vehicleType") String vehicleType){
@@ -143,20 +148,21 @@ public class ManagementApi {
     }
     @DeleteMapping("/models/{modelName}")
     public void deleteModel(@PathVariable String modelName){
-        this.vehicleService.deleteModel(modelName);
+        try {
+            this.vehicleService.deleteModel(modelName);
+        }
+        catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
     }
     @GetMapping("vehicles/{serialNo}")
     public Vehicle findVehicleById(@PathVariable String serialNo){
         return this.vehicleService.findVehicleById(serialNo);
     }
 
-    @GetMapping("/vehicles")// might be pageable
-    public List<Vehicle> getVehicles(){
-        return this.vehicleService.getAllVehicles();
-    }
-
 // PROMOTIONS ENDPOINT
     @PostMapping("/promotions")
+    @ResponseStatus(HttpStatus.CREATED)
     Promotion createPromotion(@RequestParam(name = "name") String name,
                               @RequestParam(name = "description",required = false) String description,
                               @RequestParam(name = "discount") double discount,
@@ -191,7 +197,8 @@ public class ManagementApi {
 
 // RESERVATIONS ENDPOINT
     @PostMapping("/reservations")
-    public Reservation addReservation(@RequestHeader(name="userEmail") String email,
+    @ResponseStatus(HttpStatus.CREATED)
+    public Reservation addReservation(@RequestHeader(name="userId") Long userId,
                                       @RequestHeader(name="locationId") int locationId,
                                       @RequestHeader(name="modelNames") String modelNames,
                                       @RequestHeader(name = "promotion") String promotion,
@@ -203,25 +210,29 @@ public class ManagementApi {
                                       UriComponentsBuilder builder){
         //list of models ex: bike,bike,scoot,scoot,scoot
         String[] modelName = modelNames.split(",");
-        User user = this.userService.getUserByEmail(email);
-        Reservation result = this.reservationService.createReservation(locationId,modelName,user.getId(),promotion,startDate,startTime,endDate,endTime);
-        response.setHeader("Location",builder.path("/api/rental/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
-        return result;
+        try {
+                Reservation result = this.reservationService.createReservation(locationId, modelName, userId, promotion, startDate, startTime, endDate, endTime);
+                response.setHeader("Location", builder.path("/api/rental/reservations/{reservationId}").buildAndExpand(result.getId()).toUriString());
+                return result;
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
     }
     @PatchMapping("/reservations/{reservationId}")
     public Reservation updateReservation(@PathVariable Long reservationId,
                                          @RequestHeader(name="locationId") int locationId,
                                          @RequestHeader(name="modelNames") String modelNames,
                                          @RequestHeader(name = "promotion") String promotion,
-                                         @RequestHeader(name="userEmail") String email,
+                                         @RequestHeader(name="userId") Long userId,
                                          @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                          @RequestParam("startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
                                          @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                          @RequestParam("endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime){
         //list of models ex: bike,bike,scoot,scoot,scoot
         String[] modelName = modelNames.split(",");
-        User user = this.userService.getUserByEmail(email);
-        return this.reservationService.updateReservation(reservationId,locationId,modelName,user.getId(),promotion,startDate,startTime,endDate,endTime);
+        return this.reservationService.updateReservation(reservationId,locationId,modelName,userId,promotion,startDate,startTime,endDate,endTime);
     }
     @GetMapping("/reservations")
     public List<Reservation> getAllReservations(){
@@ -253,6 +264,17 @@ public class ManagementApi {
     }
 
 // USERS ENDPOINT
+    @PostMapping("/users")
+    @ResponseStatus(HttpStatus.CREATED)
+    public User createUser(@RequestHeader(name = "name") String name,
+                           @RequestHeader(name = "email") String email,
+                           @RequestHeader(name = "password") String password,
+                           HttpServletResponse response,
+                           UriComponentsBuilder builder){
+        User user = this.userService.registerUser(name,email,password);
+        response.setHeader("Location",builder.path("api/manage/users/{userId}").buildAndExpand(user.getId()).toUriString());
+        return user;
+    }
     @GetMapping("/users")
     public List<User> findUsers(@RequestParam(name = "email",required = false,defaultValue = "") String email,
                                 @RequestParam(name = "name",required = false,defaultValue = "") String name){
@@ -261,11 +283,11 @@ public class ManagementApi {
         }
         return this.userService.getAllUsers();
     }
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/id/{userId}")
     public User getUserById(@PathVariable Long userId){
         return this.userService.getUserById(userId);
     }
-    @GetMapping("/users/{userEmail}")
+    @GetMapping("/users/email/{userEmail}")
     public User getUserByEmail(@PathVariable String userEmail){
         return this.userService.getUserByEmail(userEmail);
     }
