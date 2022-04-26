@@ -22,7 +22,7 @@ export default function Map({handleSelect,locations}){
     
     return (<div style={{margin: '1em 2em'}}>
         <ReactMap {...viewport}
-         mapboxApiAccessToken="pk.eyJ1IjoiaHJpc3RpamFuc3JtIiwiYSI6ImNrMmNmdGhnejA0aXgzYm8wbXlzcGdjcXcifQ.u48U8MvhK5IPyoiyci6jXw"
+         mapboxApiAccessToken={process.env.REACT_MAPBOX_TOKEN}
          mapStyle = "mapbox://styles/hristijansrm/ck2cwqhel0fta1co4nkwkadlz"
          onViewportChange ={(viewport)=>{setViewport(viewport);}}
          >
